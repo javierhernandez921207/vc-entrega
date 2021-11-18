@@ -1,0 +1,180 @@
+{% extends 'base.html.twig' %}
+
+{% block titulo %}
+    <h1 class="m-0 text-dark">Pedidos</h1>
+{% endblock %}
+
+{% block menu_pedidos %}
+    active
+{% endblock %}
+
+{% block camino %}
+    <li class="breadcrumb-item"><a href="{{ path('index') }}">inicio</a></li>
+    <li class="breadcrumb-item active">pedidos</li>
+{% endblock %}
+
+ {% block contenido %}
+     <div class="col-lg-5">
+         <div class="card card-info card-outline">
+             <div class="card-header">
+                 <h5 class="card-title">Pedido actual</h5>
+             </div>
+             <div class="card-body table-responsive">
+                 {% block card1 %}
+                     {% if app.session.get('carrito')|length >0 %}
+                         <table class="table table-hover">
+                             <thead>
+                             <tr>
+                                 <th>Producto</th>
+                                 <th>Unidades</th>
+                                 <th>Precio</th>
+                                 <th></th>
+                             </tr>
+                             </thead>
+                             {% set total = 0 %}
+                             {% for p in app.session.get('carrito') %}
+                                 {% set total = total + p.cantidad * p.precio %}
+                                 <tr>
+                                     <td>{{ p.nombre }}</td>
+                                     <td>{{ p.cantidad }}</td>
+                                     <td>${{ p.precio |number_format(2, '.', ',') }}</td>
+                                     <td>
+                                         <div class="btn-group btn-group-sm">
+                                             <a href="{{ path('producto_show',{'id':p.id}) }}"
+                                                class="btn btn-outline-info"><i
+                                                         class="fas fa-eye"></i></a>
+                                             <a href="{{ path('pedido_delete_prod', {'id':p.id}) }}"
+                                                class="btn btn-outline-danger"><i
+                                                         class="fa fa-minus"></i></a>
+                                         </div>
+                                     </td>
+                                 </tr>
+                             {% else %}
+                                 <tr>
+                                     <td colspan="4">No existen productos en el pedido.</td>
+                                 </tr>
+                             {% endfor %}
+                         </table>
+                         <br>
+                         <span style="font-size: medium;"
+                               class="badge badge-success float-right">Total: ${{ total |number_format(2, '.', ',') }}
+                            <h6>({{ (total * config.cambiocup) |number_format(2, '.', ',') }} cup)</h6>
+                         </span>
+                         <br>
+                         <h5>Elija un método de pago para terminar la compra.</h5>
+                         <hr>
+                         {% if config.getPagoSaldo %}
+                             <a href="{{ path('pagar_saldo') }}" style="margin: 3px"
+                                class="btn btn-success">
+                                 <i style="font-size: 32px;" class="fa fa-money-check fa-lg mr-2"></i> Pagar con saldo.
+                             </a>
+                         {% endif %}
+                         {% if config.getPagoCash %}
+
+                             <a href="{{ path('pagar_cash') }}" style="margin: 3px"
+                                class="btn btn-success">
+                                 <i style="font-size: 32px;" class="fa fa-money-bill fa-lg mr-2"></i> Pagar al cash.
+                             </a>
+                         {% endif %}
+                         {% if config.getPagoPaypal %}
+                             <a style="margin: 3px" class="btn btn-warning"
+                                href="{{ path('pagar_paypal') }}">
+                                 <img class="img img-size-32 " src="{{ asset('img/paypal-logo-svg.png') }}" alt="">Pagar
+                                 por
+                                 paypal
+                             </a>
+                         {% endif %}
+                         <hr>
+                     {% else %}
+                         <div class="callout callout-info">
+                             <h5>No tienes ningún pedido en confección!</h5>
+                             <p>Comienza a añadir productos a tu <i class="fas fa-cart-plus fa-lg mr-2"></i> carrito.
+                             </p>
+                         </div>
+                     {% endif %}
+                 {% endblock %}
+             </div>
+         </div>
+     </div>
+     <div class="col-lg-7">
+         <div class="card card-info card-outline">
+             <div class="card-header">
+                 <h5 class="card-title"> Historial de pedidos </h5>
+                 <h5 style="float: right" class="card-title">Total: {{ pedAll|length }}</h5>
+             </div>
+             <div class="card-body table-responsive">
+                 <input class="form-control" type="text" id="buscarpedido"
+                        onkeyup="buscar('buscarpedido','tablapedidos', 3)" placeholder="Buscar productos.">
+                 <table id="tablapedidos" class="table table-hover">
+                     <thead>
+                     <tr>
+                         <th>Estado</th>
+                         <th>Método de pago</th>
+                         <th>Fecha</th>
+                         <th>Productos</th>
+                         <th>Entrega</th>
+                         <th>Transporte</th>
+                         <th>Total</th>
+                         <th></th>
+                     </tr>
+                     </thead>
+                     {% for p in pedAll %}
+                         <tr>
+                             <td>
+                                 {% if p.estado == "confección" %}
+                                     <span class="badge badge-primary">{{ p.estado }}</span>
+                                 {% elseif p.estado == 'pendiente' %}
+                                     <span class="badge badge-warning">{{ p.estado }}</span>
+                                 {% elseif p.estado == 'aceptado' %}
+                                     <span class="badge badge-info">{{ p.estado }}</span>
+                                 {% elseif p.estado == 'completado' %}
+                                     <span class="badge badge-success">{{ p.estado }}</span>
+                                 {% elseif p.estado == 'cancelado' %}
+                                     <span class="badge badge-danger">{{ p.estado }}</span>
+                                 {% endif %}
+                             </td>
+                             <td>{{ p.metpago }}</td>
+                             <td>{{ p.fecha | date("d/m/Y g:ia") }}</td>
+                             <td>
+                                 {% for prod in p.getProductosPedido %}
+                                     <p>( {{ prod.cantidad }} ) {{ prod.getNombre }} - ${{ prod.precio }}</p>
+                                 {% endfor %}
+                             </td>
+                             <td>
+                                 {% if p.nombPer %}
+                                     <p>{{ p.nombPer }}, con ci: {{ p.ciPer }}, número de teléfono : {{ p.telPer }},
+                                         municipio {{ p.transporte.municipio }}, direccíon {{ p.dirPer }}.</p>
+                                 {% else %}
+                                     <p>Municipio: {{ p.transporte.municipio }}, dirección: {{ p.getCliente.getDir }},
+                                         teléfono: {{ p.getCliente.getTelf }}</p>
+                                 {% endif %}
+                             </td>
+                             <td>${{ p.transporte.tarifa |number_format(2, '.', ',') }}</td>
+                             <td>${{ (p.total + p.transporte.tarifa) | number_format(2, '.', ',') }}
+                                 <p style="font-size: small">
+                                     ({{ ( (p.transporte.tarifa+p.total) * config.cambiocup) |number_format(2, '.', ',') }}
+                                     cup)
+                                 </p>
+                             </td>
+                             <td>
+                                 {% if p.estado == 'pendiente' and p.metpago != 'paypal' %}
+                                     <a class="btn btn-danger"
+                                        href="{{ path('pedido_delete', {'id': p.id}) }}">cancelar</a>
+                                 {% endif %}
+                             </td>
+                         </tr>
+                     {% else %}
+                         <tr>
+                             <td colspan="8">No existen pedidos registrados.</td>
+                         </tr>
+                     {% endfor %}
+                 </table>
+                 <br>
+                 <div class="">
+                     {{ knp_pagination_render(pedAll) }}
+                 </div>
+             </div>
+         </div>
+     </div>
+
+ {% endblock %}

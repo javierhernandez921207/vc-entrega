@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block titulo %} <h1 class="m-0 text-dark">Nuevo producto de {{ categorium.getNombre }}</h1>{% endblock %}
+
+{% block camino %}
+    <li class="breadcrumb-item"><a href="{{ path('index') }}">inicio</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('categoria_index') }}">departamentos</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('categoria_edit', {'id': categorium.id}) }}">{{ categorium.getNombre }}</a></li>
+    <li class="breadcrumb-item active">nuevo producto</li>
+
+
+{% endblock %}
+
+{% block contenido %}
+    <div class="col-md-12">
+        <div class="card card-info card-outline">
+            <div class="card-body">
+                {{ include('producto/_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

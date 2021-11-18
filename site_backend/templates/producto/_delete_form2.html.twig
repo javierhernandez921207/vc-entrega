@@ -1,0 +1,24 @@
+<!-- Modal -->
+<div class="modal fade" id="myModalDelProd" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="form modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Eliminar producto</h4>
+            </div>
+            <form action="{{ path('producto_delete2', {'id': producto.id}) }}" method="post">
+                <div class="modal-body">
+                    <p>¿Está seguro de eliminar este producto?</p>
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="hidden" name="_token"
+                           value="{{ csrf_token('delete'~producto.id) }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">No
+                    </button>
+                    <button type="submit" class="btn btn-danger ">Si</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

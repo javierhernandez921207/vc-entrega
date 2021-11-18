@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block titulo %}
+    <h1 class="m-0 text-dark">Finalizar pedido id: {{ pedido.id }}</h1>
+{% endblock %}
+
+{% block menu_pedPend %}
+    active
+{% endblock %}
+
+{% block camino %}
+    <li class="breadcrumb-item"><a href="{{ path('index') }}">inicio</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('pedido_pendiente',{'trab':trabajador.id}) }}">Pedidos en proceso</a>
+    </li>
+    <li class="breadcrumb-item active">Finalizar pedido</li>
+{% endblock %}
+
+ {% block contenido %}
+     <div class="col-lg-12">
+         <div class="card card-info card-outline">
+             <div class="card-body">
+                 <h5 class="card-title">
+                     <strong>Pedidos
+                         de {{ pedido.getCliente.getNombre }} {{ pedido.getCliente.getApellidos }}
+                         fecha {{ pedido.fecha | date("d/m/Y g:ia") }}
+                     </strong>
+                 </h5>
+                 <br>
+                 <h5 class="card-title">
+                     {% if pedido.nombPer %}
+                         <h6>Entregar a: <strong>{{ pedido.nombPer }}</strong>, con ci:
+                             <strong>{{ pedido.ciPer }}</strong> ,
+                             teléfono : <strong>{{ pedido.telPer }}</strong>,
+                             municipio <strong>{{ pedido.transporte.municipio }}</strong>, dirección:
+                             <strong>{{ pedido.dirPer }}</strong>.</h6>
+                     {% else %}
+                         <p>Municipio: <strong>{{ pedido.transporte.municipio }}</strong>, dirección:
+                             <strong>{{ pedido.getCliente.getDir }}</strong>,
+                             teléfono: <strong>{{ pedido.getCliente.getTelf }}</strong></p>
+                     {% endif %}
+                     Trabajador: {{ pedido.getTrabajador.getNombre }} {{ pedido.getTrabajador.getApellidos }}
+                 </h5>
+                 <table class="table table-responsive-sm">
+                     <thead>
+                     <tr>
+                         <th>Productos</th>
+                         <th>Editar</th>
+                     </tr>
+                     </thead>
+                     {% for prod in pedido.getProductosPedido %}
+                         <tr>
+                             <td>
+                                 <p>( {{ prod.cantidad }} ) {{ prod.getNombre }} - ${{ prod.precio }}</p>
+                             </td>
+                             <td>
+                                 <div class="btn-group btn-group-sm">
+                                     <a href="{{ path('modificar_pedido_pendiente',{'id':pedido.id,'trab':pedido.getTrabajador.id,'productoPedido':prod.id}) }}"
+                                        class="btn btn-outline-warning"><i class="fas fa-edit"></i></a>
+                                 </div>
+                             </td>
+                         </tr>
+                     {% endfor %}
+
+                 </table>
+                 <br>
+                 <span style="font-size: medium;"
+                       class="badge badge-success float-right">Total:${{ pedido.total |number_format(2, '.', ',') }}</span>
+                 <br>
+                 <hr>
+                 <div class="callout callout-success">
+                     <h5>Finalizar el pedido</h5>
+                     <p>Verifica que todos los artículos en el pedido fueron aceptados por el cliente, de no ser así
+                         modifica el mísmo para regresar estos productos al sistema.</p>
+                 </div>
+                 <a href="{{ path('completar_pedido',{'id':pedido.id, 'trab':pedido.getTrabajador.getId}) }}"
+                    class="btn btn-success btn-lg float-right">
+                     <i class="fas fa-check fa-lg mr-2"></i>
+                     Completar
+                 </a>
+             </div>
+         </div>
+     </div>
+ {% endblock %}

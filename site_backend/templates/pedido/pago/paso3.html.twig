@@ -1,0 +1,84 @@
+{% extends 'pedido/list.html.twig' %}
+
+{% block card1 %}
+    <h1 class="text-center">¡Paso Final!</h1>
+    <h3 class="text-center">Estás a punto de pagar con PayPal la cantidad de</h3>
+    <h3 class="text-center">${{ (pedido.total + pedido.transporte.tarifa) |number_format(2, '.', ',') }}</h3>
+    <table class="table table-responsive-sm">
+        <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Unidades</th>
+            <th>Precio</th>
+        </tr>
+        </thead>
+        {% for p in pedido.getProductosPedido %}
+            <tr>
+                <td>{{ p.nombre }}</td>
+                <td>{{ p.cantidad }}</td>
+                <td>${{ p.precio |number_format(2, '.', ',') }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">No existen productos en el pedido.</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <h5 class="text-center">Transporte: {{ pedido.transporte.municipio }}
+        $ {{ pedido.transporte.tarifa|number_format(2, '.', ',') }}</h5>
+    <h5 class="text-center">A nombre de:
+        {% if pedido.nombPer != null %}
+            {{ pedido.nombPer }}
+        {% else %}
+            {{ pedido.cliente }}
+        {% endif %}
+    </h5>
+    <h5 class="text-center">Dierección de entrega:
+        {% if pedido.dirPer != null %}
+            {{ pedido.dirPer }}
+        {% else %}
+            {{ pedido.cliente.dir }}
+        {% endif %}
+    </h5>
+
+    <span style="font-size: medium;"
+          class="badge badge-success float-right">Total: ${{ (pedido.total + pedido.transporte.tarifa) |number_format(2, '.', ',') }}</span>
+    <br>
+    <hr>
+
+    <!-- Set up a container element for the button -->
+    <div id="paypal-button-container"></div>
+
+    <!-- Include the PayPal JavaScript SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=ASV4uqQxG7nMZhr-rlnCnGwuBeb7H4HF_osNyUDRcCLpWtznmpy2drplCl4kvkCQtRuiGiinPPHtqUW8"></script>
+
+    <script>
+        // Render the PayPal button into #paypal-button-container
+        paypal.Buttons({
+
+            // Set up the transaction
+            createOrder: function (data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: '{{ pedido.total + pedido.transporte.tarifa }}'
+                        }
+                    }]
+                });
+            },
+
+            // Finalize the transaction
+            onApprove: function (data, actions) {
+                return actions.order.capture().then(function (details) {
+                    // Show a success message to the buyer
+                    //alert('Transaction completed by ' + details.payer.name.given_name + '!');
+                    window.location.href = "{{ path('confirmar_pago',{'id':pedido.id}) }}";
+                });
+            }
+        }).render('#paypal-button-container');
+    </script>
+    <hr>
+
+    <a style="float: right" class="btn btn-danger" href="{{ path('pedido_delete',{'id':pedido.id}) }}"><i
+                class="fa fa-arrow-alt-circle-left fa-lg mr-2"></i>cancelar pedido</a>
+{% endblock %}

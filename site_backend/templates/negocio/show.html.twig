@@ -1,0 +1,226 @@
+{% extends 'base.html.twig' %}
+
+{% block titulo %}<h1 class="m-0 text-dark">Negocio {{ negocio.nombre }}</h1>{% endblock %}
+
+{% block menu_neg %} active {% endblock %}
+{% block menu_gest_neg %} active {% endblock %}
+
+{% block camino %}
+    <li class="breadcrumb-item"><a href="{{ path('index') }}">inicio</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('negocio_index') }}">negocios</a></li>
+    <li class="breadcrumb-item active">{{ negocio.nombre }}</li>
+{% endblock %}
+
+{% block contenido %}
+
+    {% if app.user.getRolPadre == "ROLE_ADMIN" %}
+    <div class="col-md-8">
+        {% else %}
+        <div class="col-md-12">
+        {% endif %}
+        <div class="card card-info card-outline">
+
+            <div class="card-header">
+               {% block encabezado %}<h5 class="card-title">Productos</h5> {% endblock %}
+               <h5 style="float: right" class="card-title">Total: {{ negocio.productos|length }}</h5>
+               <br>
+               {% block form_newprod %}
+                    <!-- Modal -->
+                    {% if app.user.getRolPadre == "ROLE_ADMIN" %}
+                        <div class="modal fade" id="myModalDelPed" tabindex="-1" role="dialog"
+                             aria-labelledby="myModalLabel"
+                             aria-hidden="true">
+                            <div class="form modal-dialog" style="max-width: 700px ">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title" id="myModalLabel">nuevo producto</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        {{ include('producto/_form.html.twig') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="" class="btn btn-primary" data-toggle="modal" data-target="#myModalDelPed"><i
+                                    class="fas fa-plus-circle"></i> nuevo producto</a>
+                    {% endif %}
+                    {% if negocio.productos|length > 0 %}
+                        <a href="{{ path('negocio_cuadre',{'id':negocio.id}) }}" class="btn btn-success"><i
+                                    class="fas fa-cash-register"></i> cuadre</a>
+                    {% endif %}
+                {% endblock %}
+            </div>
+            <div class="card-body table-responsive">
+                <input class="form-control" type="text" id="buscarprod"
+                        onkeyup="buscar('buscarprod','tablaprod', 0)" placeholder="Buscar.">
+                <table id="tablaprod" class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Costo</th>
+                        <th>Unidades</th>
+                        <th>Unidades para cuadrar</th>
+                        {% if app.user.getRolPadre == "ROLE_ADMIN" %}
+                            <th>Acciones</th>
+                        {% endif %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% block tabla %}
+                        {% for producto in productos %}
+                            <tr>
+                                <td>
+                                    <img src="{{ asset("uploads/productos/neg_") }}{{ negocio.id }}/{{ producto.getImg }}"
+                                         class="product-image" alt="" style="width: 64px;"><br>
+                                    {{ producto.getnombre }}</td>
+                                <td>{{ producto.getPrecio }}</td>
+                                <td>{{ producto.costo }}</td>
+                                <td>{% if producto.cantidad>0 %}
+                                        {{ producto.getCantidad }}
+                                    {% else %}
+                                        <span style="font-size: medium;" class="badge badge-danger">Agotado</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if producto.cantidad>0 %}
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{{ path('editCantCuadre',{'id':producto.id}) }}"
+                                               class="btn btn-warning"><i class="fas fa-edit"></i></a>
+                                        </div>                                       
+                                        {{ producto.getCantidadCuadre }}                                       
+                                    {% else %}
+                                        <span style="font-size: medium;" class="badge badge-danger">Agotado</span>
+                                    {% endif %}
+                                </td>
+                                {% if app.user.getRolPadre == "ROLE_ADMIN" %}
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{{ path('producto_edit_neg',{'id':producto.id}) }}"
+                                               class="btn btn-outline-warning"><i class="fas fa-edit"></i></a>
+                                        </div>
+                                    </td>
+                                {% endif %}
+                            </tr>
+
+                        {% else %}
+                            <tr>
+                                <td colspan="4">No existen productos registrados en este negocio.</td>
+                            </tr>
+                        {% endfor %}
+                    {% endblock %}
+                    </tbody>
+                </table>
+                <br>
+                {% block paginator %}
+                    <div class="">
+                        {{ knp_pagination_render(productos) }}
+                    </div>
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+
+    {% if app.user.getRolPadre == "ROLE_ADMIN" %}
+        <div class="col-md-4">
+            <div class="card card-info">
+                <div class="card-header">
+                    <h3 class="card-title">Negocio</h3>
+                    <!-- /.card-tools -->
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    {% block formn %}
+                         {{ form_start(formn) }}
+                         {{ form_row(formn) }}
+                         <button type="reset" class="btn btn-default">cancelar</button>
+                         <button type="submit" class="btn btn-success"><i class="fa fa-save fa-lg"></i> actualizar</button>
+                         {{ form_end(formn) }}
+
+                        <hr>
+                        <h5>Trabajadores ({{ negocio.trabajadores | length }})</h5>
+                        {{ form_start(formu) }}
+                        {{ form_widget(formu) }}
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-user-plus"></i> registrar </button>
+                        {{ form_end(formu) }}
+                        {% for user in negocio.trabajadores %}
+                            <h6>
+                            <a style="color:#dc3545" href="{{ path('quitarTrabNeg',{'id_neg':negocio.id, 'id_trab':user.id}) }}"><i class="fa fa-minus-circle "></i></a> {{ user.nombre }} {{ user.apellidos }}
+                            </h6>
+                        {% endfor %}
+                        <hr>
+                        <div class="callout callout-danger">
+                            <h5>Eliminar negocio!</h5>
+                            <p>Si eliminas un negocio perderas todos los productos asociados a este.</p>
+                        </div>
+                        {{ include('negocio/_delete_form.html.twig') }}
+                    {% endblock %}
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
+    {% endif %}
+
+    {% block cuadre %}
+        <div class="col-md-12">
+            <div class="card card-info card-outline">
+            <div class="card-header">
+                <h5 lass="card-title">Cuadres del negocio</h5>
+            </div>
+             <div class="card-body table-responsive">
+
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Fecha</th>
+                            <th>Saliente</th>
+                            <th>Entrante</th>
+                            <th>Total</th>
+                            <th>Ganacia</th>
+                            <th>Caja</th>
+                            <th>Documento</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for cuadre in cuadres %}
+                            <tr>
+                                <td>{{ cuadre.id }}</td>
+                                <td>{{ cuadre.fecha | date("d/m/Y g:ia") }}</td>
+                                <td>{{ cuadre.getTrabajadorSaliente }}</td>
+                                <td>{{ cuadre.getTrabajadorEntrante }}</td>
+                                <td>{{ cuadre.total }}</td>
+                                <td>{{ cuadre.ganacia }}</td>
+                                <td>{{ cuadre.fondo }}</td>
+                                <td>
+                                    <a href="{{ asset("cuadres") }}/{{ negocio.id }}/cuadre_{{ cuadre.id }}.docx"
+                                       class="btn btn-info">
+                                        <i class="fas fa-file-word"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="8">No existen cuadres registrados en este negocio.</td>
+                            </tr>
+                        {% endfor %}
+
+                        </tbody>
+                    </table>
+                    <br>
+                    <div class="">
+                        {{ knp_pagination_render(cuadres) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+
+{% endblock %}
+
+{% block ajax %}
+    <script src="{{ asset('bundles/fosjsrouting/js/router.min.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+    <script src="{{ asset('js/ajax-call.js') }}"></script>
+{% endblock %}

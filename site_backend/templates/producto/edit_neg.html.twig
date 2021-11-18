@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block titulo %}<h1 class="m-0 text-dark"> Editar - {{ producto.nombre }}</h1>{% endblock %}
+
+{% block menu_dep %} active {% endblock %}
+
+{% block camino %}
+    <li class="breadcrumb-item"><a href="{{ path('index') }}">inicio</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('negocio_index') }}">negocios</a></li>
+    <li class="breadcrumb-item"><a
+                href="{{ path('negocio_show',{'id': producto.negocio.id}) }}">{{ producto.negocio.nombre }}</a>
+    </li>
+    <li class="breadcrumb-item active">{{ producto.nombre }}</li>
+{% endblock %}
+{% block contenido %}
+    <div class="card card-solid col-12">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 col-sm-6">
+                    <div class="col-12">
+                        <img src="{{ asset("uploads/productos/neg_") }}{{ producto.negocio.id }}/{{ producto.getImg }}"
+                             class="product-image" alt="Product Image">
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                    {{ include('producto/_form2.html.twig', {'button_label': 'Actualizar'}) }}
+                    <hr>
+                    <div class="row">
+                        <button class="btn btn-danger" data-toggle="modal" data-target="#myModalDelProd">Eliminar
+                            producto
+                        </button>
+                        {{ include('producto/_delete_form2.html.twig') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

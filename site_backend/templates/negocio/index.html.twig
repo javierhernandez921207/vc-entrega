@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block titulo %} <h1 class="m-0 text-dark">Negocios</h1>{% endblock %}
+
+{% block menu_neg %} active {% endblock %}
+{% block menu_gest_neg %} active {% endblock %}
+
+{% block camino %}
+    <li class="breadcrumb-item"><a href="{{ path('index') }}">inicio</a></li>
+    <li class="breadcrumb-item active">negocios</li>
+{% endblock %}
+
+{% block contenido %}
+
+    {% if app.user.getRolPadre == "ROLE_ADMIN" %}
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12" style="margin-bottom: 10px">
+                    {{ include('negocio/_new_neg_form.html.twig') }}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% for negocio in negocios %}
+        <div class="col-md-4 col-lg-3 col-xl-2">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="m-0"><i class="fas fa-{{ negocio.icono }} nav-icon"></i> {{ negocio.nombre }}</h5>
+                </div>
+                <div class="card-body">
+                    <h6>productos: {{ negocio.productos | length }}</h6>
+                    <h6>ultimo cuadre:
+                        {% if negocio.cuadres | length > 0 %}
+                            {% set l = negocio.cuadres | length %}
+                            {{ negocio.cuadres[l - 1].fecha |  date("d/m/Y g:ia") }}
+                        {% else %}
+                            no se han realizado.
+                        {% endif %}
+                    </h6>
+                    {% if negocio.cuadres | length > 0 %}
+                        {% set l = negocio.cuadres | length %}
+                        <h6> Salió: {{ negocio.cuadres[l - 1].getTrabajadorSaliente }} </h6>
+                        <h6> Entra: {{ negocio.cuadres[l - 1].getTrabajadorEntrante }} </h6>
+                    {% endif %}
+                    <a href="{{ path('negocio_show',{'id':negocio.id}) }}"
+                       class="btn btn-info btn-lg btn-flat" style="width: 100%;">
+                        <i class="fas fa-dollar-sign fa-lg mr-2"></i>
+                        ver
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+{% endblock contenido %}

@@ -1,0 +1,15 @@
+{% extends 'user/login.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block formulario %}
+    <h5 class="mb-3 font-weight-normal">Datos para su cuenta.</h5>
+    {{ form_start(registrationForm) }}
+    {{ form_row(registrationForm.username) }}
+    {{ form_row(registrationForm.correo) }}
+    {{ form_row(registrationForm.pass) }}
+    {{ form_row(registrationForm.nombre) }}
+    {{ form_row(registrationForm.apellidos) }}
+    <button class="btn btn-primary float-right">Registrar</button>
+    {{ form_end(registrationForm) }}
+{% endblock %}

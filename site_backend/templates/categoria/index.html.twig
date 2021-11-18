@@ -1,0 +1,350 @@
+{% extends 'base.html.twig' %}
+
+{% block titulo %} <h1 class="m-0 text-dark">Departamentos</h1>{% endblock %}
+
+{% block menu_dep %} active {% endblock %}
+{% block menu_gest_dep %} active {% endblock %}
+
+{% block camino %}
+    <li class="breadcrumb-item"><a href="{{ path('index') }}">inicio</a></li>
+    <li class="breadcrumb-item active">departamentos</li>
+{% endblock %}
+
+{% block contenido %}
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="info-box">
+                    <span class="info-box-icon bg-info elevation-1"><i class="fas fa-store"></i></span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-text"><a href="{{ path('cuadre_productos') }}">Inventario</a></span>
+                        <span class="info-box-number"> {% set cantidad = 0 %}
+                            {% for categorium in categorias %}
+                                {% set cantidad = cantidad + categorium.productos | length %}
+                            {% endfor %}
+                            {{ cantidad }} productos
+                        </span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+            </div>
+            <!-- /.col -->
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="info-box mb-3">
+                    <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-shopping-cart"></i></span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-text"><a href="{{ path('pedidos_recientes') }}">Pedidos</a></span>
+                        <span class="info-box-number">{{ pedCompl | length }} completados</span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+            </div>
+            <!-- /.col -->
+
+            <!-- fix for small devices only -->
+            <div class="clearfix hidden-md-up"></div>
+
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="info-box mb-3">
+                    <span class="info-box-icon bg-success elevation-1"><i class="fas fa-dollar-sign"></i></span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-text">Inversión actual</span>
+                        <span class="info-box-number">${{ invTotal | number_format(2, '.', ',') }}</span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+            </div>
+            <!-- /.col -->
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="info-box mb-3">
+                    <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-coins"></i></span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-text">Ganacias del mes</span>
+                        <span class="info-box-number">${{ ganMes | number_format(2, '.', ',') }} </span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+            </div>
+            <!-- /.col -->
+        </div>
+    </div>
+    <div class="col-sm-12 col-md-12">
+        <div class="card card-info card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Departamentos</h3>
+                <h5 style="float: right" class="card-title">Total: {{ categorias|length }}</h5>
+                <!-- Modal nuevo dep-->
+                <div class="modal fade" id="myModalNewProd" tabindex="-1" role="dialog"
+                     aria-labelledby="myModalLabel"
+                     aria-hidden="true">
+                    <div class="form modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="myModalLabel">nuevo departamento</h4>
+                            </div>
+                            <div class="modal-body">
+                                {{ form_start(formCat) }}
+                                {{ form_widget(formCat) }}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">cancelar
+                                </button>
+                                <button type="submit" class="btn btn-success "><i
+                                            class="fa fa-save fa-lg mr-2"></i>guardar
+                                </button>
+                            </div>
+                            {{ form_end(formCat) }}
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <a href="" class="btn btn-primary" data-toggle="modal" data-target="#myModalNewProd">
+                    <i class="fas fa-plus-circle"></i> nuevo </a>
+            </div>
+            <div class="card-body table-responsive">
+                <input class="form-control" type="text" id="buscardep"
+                       onkeyup="buscar('buscardep','tabladep', 1)" placeholder="Buscar.">
+                <table id="tabladep" class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>Icono</th>
+                        <th>Productos</th>
+                        <th>Inversión($)</th>
+                        <th>Ganancia esperada($)</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for categorium in categorias %}
+                        <tr>
+                            <td>{{ categorium.id }}</td>
+                            <td>{{ categorium.nombre }}</td>
+                            <td>{{ categorium.icono }}</td>
+                            <td>{{ categorium.productos | length }}</td>
+                            <td>{{ categorium.getTotalInvertido | number_format(2, '.', ',') }}</td>
+                            <td>{{ categorium.getTotalGanacia | number_format(2, '.', ',') }}</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{{ path('categoria_show', {'id': categorium.id}) }}"
+                                       class="btn btn-outline-info"><i class="fas fa-eye"></i></a>
+                                    <a href="{{ path('categoria_edit', {'id': categorium.id}) }}"
+                                       class="btn btn-outline-warning"><i class="fas fa-edit"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4">No existen departamentos registrados.</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="card card-info card-outline">
+            <div class="card-body">
+                <div class="d-flex">
+                    <p class="d-flex flex-column">
+                        <span class="text-bold text-lg">Ganancias de la semana: ${{ glun+gmar+gmie+gjue+gvie+gsab+gdom | number_format(2, '.', ',') }}</span>
+                    </p>
+                </div>
+                <!-- /.d-flex -->
+                <div class="position-relative mb-4">
+                    <div class="chartjs-size-monitor">
+                        <div class="chartjs-size-monitor-expand">
+                            <div class=""></div>
+                        </div>
+                        <div class="chartjs-size-monitor-shrink">
+                            <div class=""></div>
+                        </div>
+                    </div>
+                    <canvas id="sales-chart" height="250" style="display: block; height: 200px; width: 572px;"
+                            width="715" class="chartjs-render-monitor"></canvas>
+                </div>
+                <div class="d-flex flex-row justify-content-end">
+                  <span class="mr-2">
+                    <i class="fas fa-square text-primary"></i> Ganancia esta semana
+                  </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card card-info card-outline">
+            <div class="card-body">
+                <div class="d-flex">
+                    <p class="d-flex flex-column">
+                        <span class="text-bold text-lg">Configuraciones generales</span>
+                    </p>
+                </div>
+                {{ form_start(formOpciones) }}
+                {{ form_row(formOpciones.ganaciaMinPedido) }}
+                <hr>
+                {{ form_row(formOpciones.pagosaldo) }}
+                {{ form_row(formOpciones.pagocash) }}
+                {{ form_row(formOpciones.pagopaypal) }}
+                <hr>
+                {{ form_row(formOpciones.cambiocup) }}
+                <button type="reset" class="btn btn-default">cancelar</button>
+                <button class="btn btn-success"><i
+                            class="fa fa-save fa-lg mr-2"></i>guardar
+                </button>
+                {{ form_end(formOpciones) }}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card card-info card-outline">
+            <div class="card-body table-responsive">
+                <h6 class="text-bold text-lg">Tarifas de transportes</h6>
+
+                <button data-toggle="modal" data-target="#myModalTransp" style="margin-bottom: 10px"
+                        class="btn btn-primary"><i class="fa fa-plus-circle"></i> nueva tarifa
+                </button>
+                <!-- Modal Saldo-->
+                <div class="modal fade" id="myModalTransp" tabindex="-1" role="dialog"
+                     aria-labelledby="myModalLabel"
+                     aria-hidden="true">
+                    <div class="form modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="myModalLabel">Nueva tarifa</h4>
+                            </div>
+                            <div class="modal-body">
+                                {{ form_start(formTrans) }}
+                                {{ form_row(formTrans.municipio) }}
+                                {{ form_row(formTrans.tarifa) }}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">cancelar
+                                </button>
+                                <button type="submit" class="btn btn-success "><i
+                                            class="fa fa-save fa-lg mr-2"></i>guardar
+                                </button>
+                            </div>
+                            {{ form_end(formTrans) }}
+                        </div>
+                    </div>
+                </div>
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>Municipio</th>
+                        <th>Tarifa (USD)</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for t in transporte %}
+                        <tr>
+                            <td>{{ t.municipio }}</td>
+                            <td>{{ t.tarifa | number_format(2,'.',',') }}</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{{ path('transp_delete',{'id':t.id}) }}"
+                                       class="btn btn-outline-danger"><i class="fas fa-minus"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4">No existen tarifas de transporte.</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block graf_ganacia %}
+    <script src="{{ asset('plugins/chart.js/Chart.min.js') }}"></script>
+    <script>
+        $(function () {
+            'use strict'
+
+            var ticksStyle = {
+                fontColor: '#495057',
+                fontStyle: 'bold'
+            }
+
+            var mode = 'index'
+            var intersect = true
+
+            var $salesChart = $('#sales-chart')
+            var salesChart = new Chart($salesChart, {
+                type: 'bar',
+                data: {
+                    labels: ['LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB', 'DOM'],
+                    datasets: [
+                        {
+                            backgroundColor: '#007bff',
+                            borderColor: '#007bff',
+                            data: [{{ glun }}, {{ gmar }}, {{ gmie }}, {{ gjue }}, {{ gvie }}, {{ gsab }}, {{ gdom }}]
+                        }
+                    ]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    tooltips: {
+                        mode: mode,
+                        intersect: intersect
+                    },
+                    hover: {
+                        mode: mode,
+                        intersect: intersect
+                    },
+                    legend: {
+                        display: false
+                    },
+                    scales: {
+                        yAxes: [{
+                            // display: false,
+                            gridLines: {
+                                display: true,
+                                lineWidth: '4px',
+                                color: 'rgba(0, 0, 0, .2)',
+                                zeroLineColor: 'transparent'
+                            },
+                            ticks: $.extend({
+                                beginAtZero: true,
+
+                                // Include a dollar sign in the ticks
+                                callback: function (value, index, values) {
+                                    if (value >= 1000) {
+                                        value /= 1000
+                                        value += 'k'
+                                    }
+                                    return '$' + value
+                                }
+                            }, ticksStyle)
+                        }],
+                        xAxes: [{
+                            display: true,
+                            gridLines: {
+                                display: false
+                            },
+                            ticks: ticksStyle
+                        }]
+                    }
+                }
+            })
+        })
+    </script>
+{% endblock %}

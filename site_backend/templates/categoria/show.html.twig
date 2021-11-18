@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% block titulo %}<h1 class="m-0 text-dark">Departamento {{ categorium.nombre }}</h1>{% endblock %}
+
+{% block menu_dep %} active {% endblock %}
+
+{% block menu %}
+    {% for cat in categorias %}
+        {% if cat.depVacio == false %}
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{{ path('categoria_show', {'id': cat.id}) }}"
+                       class="nav-link{% if cat.id == categorium.id %} active{% endif %}">
+                        <i class="fas fa-{{ cat.icono }} nav-icon"></i>
+                        <p>{{ cat.nombre }}</p>
+                    </a>
+                </li>
+            </ul>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+
+{% block camino %}
+    <li class="breadcrumb-item"><a href="{{ path('index') }}">inicio</a></li>
+    <li class="breadcrumb-item active">{{ categorium.nombre }}</li>
+{% endblock %}
+
+{% block contenido %}
+
+
+    {% for p in productos %}
+        {% if p.cantidad>0 %}
+            <div class="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+                <div class="card">
+                    <div class="card-header">
+                        {% if p.registro.diff(date('now')).days <= 1 %}
+                            <div class="ribbon-wrapper">
+                                <div class="ribbon bg-success">nuevo</div>
+                            </div>
+                        {% endif %}
+                        <a href="{{ path('producto_show',{'id':p.getId}) }}">
+                            <h6 class="single-line">{{ p.getNombre }}</h6>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        {% if app.user %}
+                            <div class="div-img-prod">
+                                <a href="{{ path('producto_show',{'id':p.getId}) }}">
+                                    <img style="height: auto; width: auto; max-height: 150px;"
+                                         src="{{ asset("uploads/productos/") }}{{ p.getCategoria.id }}/{{ p.getImg }}"
+                                         class="img-fluid mx-auto img-prod d-block" alt=""></a>
+                            </div>
+                            <hr>
+                            <h5 class="text-center">
+                                ${{ p.getPrecio |number_format(2, '.', ',') }}
+                                <h6 class="text-center single-line">
+                                    ({{ (p.getPrecio * config.cambiocup) |number_format(0, '.', ',') }}
+                                    cup)</h6>
+                            </h5>
+                            <hr>
+                            {% if p.cantidad >0 %}
+                                <button onclick="addcarrito({{ p.id }}, 1)"
+                                        class="btn btn-success  btn-flat" style="width: 100%;">
+                                    <i class="fas fa-cart-plus fa-lg mr-2"></i>
+                                </button>
+                            {% else %}
+                                <span style="width: 100%;font-size: medium;"
+                                      class="badge badge-danger">Agotado</span>
+                            {% endif %}
+                        {% else %}
+                            <div class="div-img-prod">
+                                <a href="{{ path('producto_show',{'id':p.getId}) }}">
+                                    <img style="height: auto; width: auto; max-height: 150px;"
+                                         src="{{ asset("uploads/productos/") }}{{ p.getCategoria.id }}/{{ p.getImg }}"
+                                         class="img-fluid mx-auto img-prod d-block" alt=""></a>
+                            </div>
+                            <hr>
+                            <h5 class="text-center">
+                                ${{ p.getPrecio |number_format(2, '.', ',') }}
+                                <h6 class="text-center single-line">
+                                    ({{ (p.getPrecio * config.cambiocup) |number_format(0, '.', ',') }}
+                                    cup)</h6>
+                            </h5>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class=" error-content">
+            <h3><i class="fas fa-exclamation-triangle text-warning"></i> Departamento vacío.</h3>
+            <p>
+                Lo sentimos por el momento no se han registrado productos en este departamento.
+            </p>
+        </div>
+    {% endfor %}
+    <div class="col-12">
+        {{ knp_pagination_render(productos) }}
+    </div>
+
+{% endblock %}

@@ -1,0 +1,19 @@
+<div class="row">
+    <hr>
+    <div class="col-12">
+        {{ form_start(form) }}
+        {{ form_row(form._token) }}
+
+        {{ form_row(form.nombre) }}
+        {{ form_row(form.precio) }}
+        {{ form_row(form.costo) }}
+        {{ form_row(form.cantidad) }}
+        {{ form_row(form.cantMin) }}
+        {{ form_row(form.descr) }}
+        {{ form_row(form.imagen) }}
+    </div>
+    <button style="margin-right: 3px" type="reset" class="btn btn-default">cancelar</button>
+    <button class="btn btn-success"><i class="fa fa-save fa-lg mr-2"></i>{{ button_label|default('Guardar') }}</button>
+    {{ form_end(form) }}
+</div>
+

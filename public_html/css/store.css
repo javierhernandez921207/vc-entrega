@@ -1,0 +1,33 @@
+a {
+    color: #315480;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+.layout-footer-fixed .wrapper .main-footer {
+    bottom: 0;
+    left: 0;
+    position: relative;
+    right: 0;
+    z-index: 1032;
+}
+
+.single-line {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.div-img-prod {
+    height: 150px;
+}
+
+.img-prod {
+    height: auto;
+    width: auto;
+    max-height: 150px;
+}
+.sidebar2{
+    height: calc(100% - 4rem);
+    overflow-y: auto;
+}

@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+{% block titulo %}<h1 class="m-0 text-dark">{{ producto.nombre }}</h1>{% endblock %}
+
+{% block menu_dep %} active {% endblock %}
+{% block menu %}
+    {% for cat in categorias %}
+        <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a href="{{ path('categoria_show', {'id': cat.id}) }}"
+                   class="nav-link{% if cat.id == producto.getCategoria.id %} active{% endif %}">
+                    <i class="fas fa-{{ cat.icono }} nav-icon"></i>
+                    <p>{{ cat.nombre }}</p>
+                </a>
+            </li>
+        </ul>
+    {% endfor %}
+{% endblock %}
+
+{% block camino %}
+    <li class="breadcrumb-item"><a href="{{ path('index') }}">inicio</a></li>
+    <li class="breadcrumb-item"><a
+                href="{{ path('categoria_show',{'id': producto.getCategoria.id}) }}">{{ producto.getCategoria.nombre }}</a>
+    </li>
+    <li class="breadcrumb-item active">{{ producto.nombre }}</li>
+{% endblock %}
+
+{% block contenido %}
+    <div class="card card-solid col-12">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 col-sm-6">
+                    <div class="col-12">
+                        {% if producto.getImg %}
+                            <img src="{{ asset("uploads/productos/") }}{{ producto.getCategoria.id }}/{{ producto.getImg }}"
+                                 class="img-fluid mx-auto d-block " alt="Product Image">
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                    {% if app.user %}
+                        {% if app.user.getRolPadre == "ROLE_ADMIN" %}
+                            <a href="{{ path('producto_edit',{'id':producto.getId}) }}"
+                               class="btn btn-outline-warning" style="float: right;"><i class="fas fa-edit"></i></a>
+                        {% endif %}
+                    {% endif %}
+                    <h3 class="my-3">{{ producto.nombre }}</h3>
+                    <textarea readonly class="form-control"
+                              style="background-color: #ffffff;height: 300px; ">{{ producto.descr }}</textarea>
+                    <hr>
+                    <h5>Registro: {{ producto.registro | date("d/m/Y g:ia") }}</h5>
+
+                    <!-- <span class="bg-danger" style="padding: 5px;"> Cantidad en almacén: {{ producto.cantidad }} </span> -->
+
+                    <div class="bg-gray py-2 px-3 mt-4">
+                        <h2 class="mb-0">
+                            ${{ producto.precio |number_format(2, '.', ',') }}
+                            <h5>({{ (producto.getPrecio * config.cambiocup) |number_format(2, '.', ',') }}
+                                cup)</h5>
+                        </h2>
+                    </div>
+                    {% if app.user %}
+                        {% if producto.cantidad >0 %}
+                            <div class="mt-4">
+                                <input type="number" required class="form-control mb-2" id="formcantprod"
+                                       placeholder="cantidad">
+                                <button onclick="addcarrito({{ producto.id }}, parseInt(document.getElementById('formcantprod').value) )"
+                                        class="btn btn-success btn-lg btn-flat">
+                                    <i class="fas fa-cart-plus fa-lg mr-2"></i> Adicionar
+                                </button>
+                            </div>
+                        {% else %}
+                            <br>
+                            <span style="font-size: medium;"
+                                  class="badge badge-danger">Agotado</span>
+                        {% endif %}
+                    {% else %}
+                        <hr>
+                        <a href="{{ path('app_login') }}" class="btn btn-success btn-flat">
+                            <i class="fas fa-user fa-lg mr-2"></i> inicia sesión
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

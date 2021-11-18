@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block menu_neg %} active {% endblock %}
+{% block menu_gest_neg %} active {% endblock %}
+
+{% block titulo %}<h1 class="m-0 text-dark">Negocio {{ negocio.nombre }}</h1>{% endblock %}
+
+{% block camino %}
+    <li class="breadcrumb-item"><a href="{{ path('index') }}">inicio</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('negocio_index') }}">negocios</a></li>
+    <li class="breadcrumb-item"><a
+                href="{{ path('negocio_show',{'id': negocio.id}) }}">{{ negocio.nombre }}</a>
+    </li>
+    <li class="breadcrumb-item active">cuadre {{ negocio.nombre }}</li>
+{% endblock %}
+
+
+{% block contenido %}
+    <div class="col-md-8">
+        <div class="card card-info card-outline">
+            <div class="card-header">
+                <h5 style="float: right" class="card-title">Productos: {{ negocio.productos|length }}</h5>
+                <h5>Cuadre {{ negocio.nombre }} {{ date('now') | date("d/m/Y") }}</h5>
+                <div class="btn btn-default">
+                    <a href="{{ path('negocio_show',{'id': negocio.id}) }}">Productos</a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ form_start(formCaja) }}
+                        {{ form_widget(formCaja) }}                        
+                        {% if negocio.trabajadores.count > 0%}
+                            <button type="reset" class="btn btn-default">cancelar</button>
+                            <button type="submit" class="btn btn-success"><i class="fa fa-save fa-lg mr-2"></i>guardar
+                        {% else %}
+                            <p class="text-danger">Debe tener trabajadores registrados en el negocio, para relaizar el cuadre.</p>
+                        {% endif %}
+                        </button>
+                        {{ form_end(formCaja) }}
+                    </div>
+                    <div class="col-md-2" style="display: flex;"></div>
+                    <div class="col-md-2">
+                        <span><h4>Caja Actual: </h4></span>
+                        <span class="badge badge-warning">
+                        <h1 style="font-size: 2.5rem;">${{ totalRecaudado }}</h1>
+                        </span>
+                    </div>
+                    <div class="col-md-2" style="display: flex;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="callout callout-info">
+            <h6><i class="fas fa-cash-register"></i> Cuadres por el sistema.</h6>
+            <p>1 Revise si el valor en la caja corresponde con el del sistema. </p>
+            <p>2 Registra el trabajador que sale, el que recibe y el monto dejado en caja. </p>
+            <p>3 Preciona guardar para contabilizar el cuadre del día. </p>
+        </div>
+    </div>
+{% endblock %}

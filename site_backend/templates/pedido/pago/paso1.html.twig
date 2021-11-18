@@ -1,0 +1,49 @@
+{% extends 'pedido/list.html.twig' %}
+
+{% block card1 %}
+    <h5 class="card-title">Pedido actual</h5>
+    <table class="table table-responsive-sm">
+        <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Unidades</th>
+            <th>Precio</th>
+        </tr>
+        </thead>
+        {% set total = 0 %}
+        {% for p in app.session.get('carrito') %}
+            <tr>
+                <td>{{ p.nombre }}</td>
+                <td>{{ p.cantidad }}</td>
+                <td>${{ p.precio |number_format(2, '.', ',') }}</td>
+            </tr>
+            {% set total = total + p.cantidad * p.precio %}
+        {% endfor %}
+    </table>
+    <div >
+    <span style="font-size: medium;"
+          class="badge badge-success float-right">Total: ${{ total |number_format(2, '.', ',') }}
+                                                <h6>({{ total * config.cambiocup |number_format(2, '.', ',') }} cup)</h6>
+                                             </span>
+    </div>
+    <br>
+    <hr>
+    <div class="callout callout-info">
+        <h5>Necesitamos conocer unos últimos datos para proceder al pago.</h5>
+        <h6>Puede recibir el pedido en la direccón de la cuenta actual o en otra dirección a nombre de
+            un familiar o amigo. </h6>
+        <h6>Esta es la dirección que tenemos asociada a tu cuenta.</h6>
+        <p>{{ app.user.dir }}</p>
+    </div>
+
+    {{ form_start(formentrega) }}
+    {{ form_row(formentrega.transporte) }}
+    {{ form_row(formentrega.entrega) }}
+    <hr>
+    <button style="float: right; margin-left: 5px;" class="btn btn-success" type="submit"><i
+                class="fa fa-arrow-alt-circle-right fa-lg mr-2"></i>continuar
+    </button>
+    <a style="float: right" class="btn btn-default" href="{{ path('pedido_list') }}"><i
+                class="fa fa-arrow-alt-circle-left fa-lg mr-2"></i>atrás</a>
+    {{ form_end(formentrega) }}
+{% endblock %}

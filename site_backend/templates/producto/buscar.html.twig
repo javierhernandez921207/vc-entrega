@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block titulo %}
+    <h1 class="m-0 text-dark">Buscar productos</h1>
+{% endblock %}
+
+{% block body_id 'blog_search' %}
+
+ {% block contenido %}
+     <div class="col-lg-12">
+         <div class="card card-info card-outline">
+             <div class="card-body">
+                 <form action="{{ path('buscar_producto') }}" method="get">
+                     <div class="form-group">
+                         <label>¿Qué quieres buscar?</label>
+                         <input name="q"
+                                class="form-control search-field"
+                                placeholder="Producto a buscar.."
+                                autocomplete="off"
+                                autofocus
+                                data-no-results-message="No hay resultados."
+                         >
+                     </div>
+                 </form>
+             </div>
+         </div>
+     </div>
+
+     <div id="results">
+     </div>
+ {% endblock %}

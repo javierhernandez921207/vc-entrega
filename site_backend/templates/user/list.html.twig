@@ -1,0 +1,119 @@
+{% extends 'base.html.twig' %}
+
+{% block titulo %}
+    <h1 class="m-0 text-dark">Usuarios</h1>
+{% endblock %}
+
+{% block menu_act %}
+    active
+{% endblock %}
+
+{% block camino %}
+    <li class="breadcrumb-item"><a href="{{ path('index') }}">inicio</a></li>
+    <li class="breadcrumb-item active">usuarios</li>
+{% endblock %}
+
+ {% block contenido %}
+     <div class="col-lg-6">
+         <div class="card card-info card-outline">
+             <div class="card-header">
+                 <h5 class="card-title">Clientes</h5>
+                 <h5 style="float: right" class="card-title">Total: {{ usuarios|length }}</h5>
+
+             </div>
+             <div class="card-body table-responsive">
+                 <input class="form-control" type="text" id="buscarcliente"
+                        onkeyup="buscar('buscarcliente','tablacliente', 1)" placeholder="Buscar.">
+                 <table id="tablacliente" class="table table-hover">
+                     <thead>
+                     <tr>
+                         <th>User</th>
+                         <th>Nombre y apellidos</th>
+                         <th>Saldo</th>
+                         <th>Deuda</th>
+                         <th>Registro</th>
+                         <th>Acciones</th>
+                     </tr>
+                     </thead>
+                     {% for u in usuarios %}
+                         <tr>
+                             <td>{{ u.username }}</td>
+                             <td>{{ u.nombre }} {{ u.apellidos }}</td>
+                             <td>{{ u.saldo |number_format(2, '.', ',') }}</td>
+                             <td>{{ u.deuda |number_format(2, '.', ',') }}</td>
+                             <td> {{ u.registro | date("d/m/Y g:ia") }}</td>
+                             <td>
+                                 <div class="btn-group btn-group-sm">
+                                     <a href="{{ path('user_show',{'id':u.id}) }}"
+                                        class="btn btn-outline-info"><i
+                                                 class="fas fa-eye"></i></a>
+                                 </div>
+                             </td>
+                         </tr>
+                     {% else %}
+                         <tr>
+                             <td colspan="4">No existen usuarios registrados.</td>
+                         </tr>
+                     {% endfor %}
+                 </table>
+                 <br>
+                 <div class="">
+                     {{ knp_pagination_render(usuarios) }}
+                 </div>
+             </div>
+         </div>
+     </div>
+
+     <div class="col-lg-6">
+         <div class="card card-info card-outline">
+             <div class="card-header">
+                 <h5 class="card-title">Trabajadores</h5>
+                 <h5 style="float: right" class="card-title">Total: {{ usuariosAdmin|length }}</h5>
+             </div>
+             <div class="card-body table-responsive">
+                 <input class="form-control" type="text" id="buscartrabajador"
+                        onkeyup="buscar('buscartrabajador' +
+    '','tablatrabajador',1)" placeholder="Buscar.">
+                 <table id="tablatrabajador" class="table table-hover">
+                     <thead>
+                     <tr>
+                         <th>User</th>
+                         <th>Nombre y apellidos</th>
+                         <th>Rol</th>
+                         <th>Registro</th>
+                         <th>Acciones</th>
+                     </tr>
+                     </thead>
+                     {% for u in usuariosAdmin %}
+                         <tr>
+                             <td>{{ u.username }}</td>
+                             <td>{{ u.nombre }} {{ u.apellidos }}</td>
+                             <td>{{ u.getrolpadre }} </td>
+                             <td> {{ u.registro | date("d/m/Y g:ia") }}</td>
+                             <td>
+                                 <div class="btn-group btn-group-sm">
+                                     <a href="{{ path('user_show',{'id':u.id, 'id2':app.user.id}) }}"
+                                        class="btn btn-outline-info"><i
+                                                 class="fas fa-eye"></i></a>
+                                 </div>
+                             </td>
+                         </tr>
+                     {% else %}
+                         <tr>
+                             <td colspan="4">No existen usuarios registrados.</td>
+                         </tr>
+                     {% endfor %}
+                 </table>
+                 <br>
+                 <div class="">
+                     {{ knp_pagination_render(usuariosAdmin) }}
+                 </div>
+             </div>
+         </div>
+     </div>
+     <!-- /.col-md-6 -->
+     <div class="col-lg-6">
+
+     </div>
+     <!-- /.col-md-6 -->
+ {% endblock %}

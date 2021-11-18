@@ -1,0 +1,23 @@
+<!-- Modal -->
+<div class="modal fade" id="myModalDelDep" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="form modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">nuevo negocio</h4>
+            </div>
+            <div class="modal-body">
+                {{ form_start(formn) }}
+                {{ form_widget(formn) }}
+            </div>
+            <div class="modal-footer float-right">
+                <button type="reset"  data-dismiss="modal"  class="btn btn-default" >cancelar</button>
+                <button class="btn btn-success"><i class="fa fa-save fa-lg"></i> guardar</button>
+                {{ form_end(formn) }}
+            </div>
+        </div>
+    </div>
+</div>
+<button class="btn btn-primary" data-toggle="modal" data-target="#myModalDelDep">
+    <i class="fas fa-plus-circle"></i> nuevo negocio
+</button>

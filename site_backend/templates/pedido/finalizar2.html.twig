@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block titulo %}
+    <h1 class="m-0 text-dark">Finalizar pedido id: {{ pedido.id }}</h1>
+{% endblock %}
+
+{% block menu_pedPend %}
+    active
+{% endblock %}
+
+{% block camino %}
+    <li class="breadcrumb-item"><a href="{{ path('index') }}">inicio</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('pedido_pendiente',{'trab':trabajador.id}) }}">Pedidos en proceso</a>
+    </li>
+    <li class="breadcrumb-item"><a
+                href="{{ path('finalizar_pedido_pendiente',{'id':pedido.id,'trab':trabajador.id}) }}">Pedido {{ pedido.id }}</a>
+    </li>
+    <li class="breadcrumb-item active">Modificar pedido</li>
+{% endblock %}
+
+ {% block contenido %}
+     <div class="col-lg-12">
+         <div class="card card-info card-outline">
+             <div class="card-body">
+                 <h5 class="card-title">
+                     <strong>Pedidos
+                         de {{ pedido.getCliente.getNombre }} {{ pedido.getCliente.getApellidos }}
+                         fecha {{ pedido.fecha | date("d/m/Y g:ia") }}
+                     </strong>
+                 </h5>
+                 <br>
+                 <h5 class="card-title">
+                     Dirección: {{ pedido.getCliente.getDir }}
+                     Trabajador: {{ pedido.getTrabajador.getNombre }} {{ pedido.getTrabajador.getApellidos }}
+                 </h5>
+                 <table class="table table-responsive-sm">
+                     <thead>
+                     <tr>
+                         <th>Producto</th>
+                         <th>Editar</th>
+                     </tr>
+                     </thead>
+                     <tr>
+                         <td>
+                             <p>( {{ prod.cantidad }} ) {{ prod.getNombre }} - ${{ prod.precio }}</p>
+                         </td>
+                         <td>
+                             {{ form_start(form) }}
+                             {{ form_row(form.cantidad) }}
+                             <button class="btn btn-success" type="subimt">
+                                 <i class="fas fa-save fa-lg mr-2"></i> guardar
+                             </button>
+                             {{ form_end(form) }}
+                         </td>
+                     </tr>
+                 </table>
+                 <hr>
+             </div>
+         </div>
+     </div>
+ {% endblock %}

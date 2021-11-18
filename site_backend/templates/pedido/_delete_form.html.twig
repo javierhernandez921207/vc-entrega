@@ -1,0 +1,26 @@
+<!-- Modal -->
+<div class="modal fade" id="myModalDelPed" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="form modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Cancelar pedido</h4>
+            </div>
+            <form method="post" action="{{ path('pedido_delete', {'id': pedido.id}) }}">
+                <div class="modal-body">
+                    <p>¿Está seguro de cancelar el pedido.?</p>
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ pedido.id) }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">No
+                    </button>
+                    <button type="submit" class="btn btn-danger ">Si</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<button class="btn btn-danger" data-toggle="modal" data-target="#myModalDelPed"><i class="fas fa-ban fa-lg mr-2"></i>Cancelar Pedido
+</button>

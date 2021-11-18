@@ -1,0 +1,24 @@
+<div class="row">
+    <hr>
+    <div class="col-sm-6">
+        {{ form_start(form) }}
+        {{ form_row(form._token) }}
+
+        {{ form_row(form.nombre) }}
+        {{ form_row(form.precio) }}
+        {{ form_row(form.costo) }}
+        {{ form_row(form.cantidad) }}
+        {{ form_row(form.cantMin) }}
+    </div>
+    <div class="col-sm-6">
+        {{ form_row(form.descr) }}
+        {{ form_row(form.imagen) }}
+    </div>
+    <div class=" col-sm-12 modal-footer">
+        <button style="margin-right:3px "  data-dismiss="modal" class="btn btn-default">cancelar</button>
+        <button class="btn btn-success"><i class="fa fa-save fa-lg mr-2"></i>{{ button_label|default('guardar') }}
+        </button>
+        {{ form_end(form) }}
+    </div>
+</div>
+
