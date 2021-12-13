@@ -1,0 +1,59 @@
+{% extends 'negocio/show.html.twig' %}
+
+{% block form_newprod %}
+{% endblock %}
+
+{% block camino %}
+    <li class="breadcrumb-item"><a href="{{ path('index') }}">inicio</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('negocio_index') }}">negocios</a></li>
+    <li class="breadcrumb-item"><a
+                href="{{ path('negocio_show',{'id': producto.negocio.id}) }}">{{ producto.negocio.nombre }}</a>
+    </li>
+    <li class="breadcrumb-item active">{{ negocio.nombre }}</li>
+{% endblock %}
+
+{% block encabezado %}
+    <div class="btn btn-default">
+        <a href="{{ path('negocio_show',{'id': producto.negocio.id}) }}">Productos</a>
+    </div>
+
+{% endblock %}
+
+{% block formn %}
+    <div class="callout callout-success">
+        <h6><i class="fas fa-cash-register"></i> IMPORTANTE.</h6>
+        <p>Si en el negocios destino existe un producto con el mismo nombre se adiciona la cantidad movida. </p>
+    </div>
+{% endblock %}
+
+{% block tabla %}
+    <hr> 
+    <div>
+        {% if app.user.getRolPadre == "ROLE_ADMIN" %}
+            <p>Datos del movimiento. </p>
+            {{ form_start(formMover) }}
+            {{ form_widget(formMover) }}
+            {{ form_end(formMover) }}
+        {% endif %}
+    </div> 
+    <tr>
+        <td>
+            <img src="{{ asset("uploads/productos/neg_") }}{{ negocio.id }}/{{ producto.getImg }}"
+                 class="product-image" alt="" style="width: 64px;"><br>
+            {{ producto.getnombre }}</td>
+        <td>{{ producto.getPrecio }}</td>
+        <td>{{ producto.costo }}</td>
+        <td>{{ producto.getCantidad }}</td>
+        <td>{{ producto.getCantidadCuadre }}</td>
+        <td>
+            <div class="btn-group btn-group-sm">
+                <a href="{{ path('producto_edit_neg',{'id':producto.id}) }}"
+                   class="btn btn-outline-warning"><i class="fas fa-edit"></i></a>
+            </div>
+        </td>
+    </tr>
+      
+{% endblock %}
+
+{% block paginator %}{% endblock %}
+{% block cuadre %}{% endblock %}

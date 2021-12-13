@@ -87,7 +87,7 @@
                                         <div class="btn-group btn-group-sm">
                                             <a href="{{ path('editCantCuadre',{'id':producto.id}) }}"
                                                class="btn btn-warning"><i class="fas fa-edit"></i></a>
-                                        </div>                                       
+                                        </div>                          
                                         {{ producto.getCantidadCuadre }}                                       
                                     {% else %}
                                         <span style="font-size: medium;" class="badge badge-danger">Agotado</span>
@@ -99,6 +99,12 @@
                                             <a href="{{ path('producto_edit_neg',{'id':producto.id}) }}"
                                                class="btn btn-outline-warning"><i class="fas fa-edit"></i></a>
                                         </div>
+                                        {% if producto.cantidad>0 %}
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="{{ path('moverProducto',{'id':producto.id}) }}"
+                                                class="btn btn-warning"><i class="fas fa-dolly"></i></a>
+                                            </div> 
+                                        {% endif %}
                                     </td>
                                 {% endif %}
                             </tr>
@@ -136,6 +142,27 @@
                          <button type="reset" class="btn btn-default">cancelar</button>
                          <button type="submit" class="btn btn-success"><i class="fa fa-save fa-lg"></i> actualizar</button>
                          {{ form_end(formn) }}
+                         <hr>
+                        <div class="col-12">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-success elevation-1"><i class="fas fa-dollar-sign"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Inversión {{ negocio.nombre }}</span>
+                                    <span class="info-box-number"> ${{ negocio.getTotalInvertido | number_format(2, '.', ',') }}
+                                </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-gradient-maroon elevation-1"><i class="fas fa-coins"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Ganacia esperada {{ negocio.nombre }}</span>
+                                    <span class="info-box-number"> ${{ negocio.getTotalGanacia | number_format(2, '.', ',') }}
+                                </span>
+                                </div>
+                            </div>
+                        </div>
 
                         <hr>
                         <h5>Trabajadores ({{ negocio.trabajadores | length }})</h5>

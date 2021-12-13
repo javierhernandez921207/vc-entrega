@@ -163,4 +163,33 @@ class Negocio
 
         return $this;
     }
+
+    public function getTotalInvertido(): ?float
+    {
+        $cant = 0;
+        for ($i = 0; $i < count($this->getProductos()); $i++) {
+            $cant += $this->getProductos()->get($i)->getCosto() * $this->getProductos()->get($i)->getCantidad();
+        }
+        return $cant;
+    }
+
+    public function getTotalVenta(): ?float
+    {
+        $cant = 0;
+        for ($i = 0; $i < count($this->getProductos()); $i++) {
+            $cant += $this->getProductos()->get($i)->getPrecio() * $this->getProductos()->get($i)->getCantidad();
+        }
+        return $cant;
+    }
+
+    public function getTotalGanacia(): ?float
+    {
+        return $this->getTotalVenta() - $this->getTotalInvertido();
+    }
+
+    public function __toString()
+    {
+        return $this->nombre;
+    }
+
 }

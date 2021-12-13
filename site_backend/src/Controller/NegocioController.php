@@ -9,6 +9,7 @@ use App\Entity\Producto;
 use App\Entity\User;
 use App\Form\CantProdActualType;
 use App\Form\DineroCajaType;
+use App\Form\CantProdMoverType;
 use App\Form\NegocioType;
 use App\Form\ProductoType;
 use App\ImageOptimizer;
@@ -16,6 +17,7 @@ use App\Repository\CategoriaRepository;
 use App\Repository\ConfiguracionRepository;
 use App\Repository\NegocioRepository;
 use App\Repository\UserRepository;
+use DateTime;
 use Doctrine\ORM\EntityManager;
 use Knp\Component\Pager\PaginatorInterface;
 use PhpOffice\PhpWord\TemplateProcessor;
@@ -222,6 +224,70 @@ class NegocioController extends AbstractController
             ]
         );
     }
+
+    /**
+     * @Route ("/trab/negocio/{id}/moverProducto/", name="moverProducto")
+     */
+    public function moverProductoNegocio(ConfiguracionRepository $configuracionRepository, CategoriaRepository $categoriaRepository, Request $request, Producto $producto)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $formMoverProd = $this->createForm(CantProdMoverType::class);        
+        $formMoverProd->handleRequest($request);
+
+        if ($formMoverProd->isSubmitted() && $formMoverProd->isValid()) {
+            if ($formMoverProd->get('cantidad_mover')->getData() > $producto->getCantidad()) {
+                $this->addFlash('error', "La cantidad a mover de " . $producto->getNombre() . " no puede ser mayor que " . $producto->getCantidad());
+            } 
+            elseif($formMoverProd->get('cantidad_mover')->getData()< 1) {
+                $this->addFlash('error', "La cantidad de " . $producto->getNombre() . " a mover debe ser mayor que 1.");
+            }
+            elseif($formMoverProd->get('negocio')->getData() == $producto->getNegocio() ){
+                $this->addFlash('error', "Elige otro negocio para mover este producto.");
+            }
+            else{
+                $existe = false;
+                foreach ($formMoverProd->get('negocio')->getData()->getProductos() as $prod) {
+                    if($prod->getNombre()== $producto->getNombre()){
+                        $prod->setCantidad($prod->getCantidad()+$formMoverProd->get('cantidad_mover')->getData());
+                        $prod->setCantidadCuadre($prod->getCantidad());
+                        $em->persist($prod);
+                        $existe = true;
+                    }
+                }
+                if(!$existe){
+                    $prod = new Producto();
+                    $prod->setNombre($producto->getNombre());
+                    $prod->setRegistro(new \DateTime('now'));
+                    $prod->setDescr($producto->getDescr());
+                    $prod->setImg($producto->getImg());
+                    $prod->setPrecio($producto->getPrecio());
+                    $prod->setCosto($producto->getCosto());
+                    $prod->setCantMin($producto->getCantMin());
+                    $prod->setNegocio($formMoverProd->get('negocio')->getData());
+                    $prod->setCantidad($formMoverProd->get('cantidad_mover')->getData());
+                    $prod->setCantidadCuadre($formMoverProd->get('cantidad_mover')->getData());
+                    $em->persist($prod);                    
+                }
+                $producto->setCantidad($producto->getCantidad()- $formMoverProd->get('cantidad_mover')->getData());
+                $producto->setCantidadCuadre($producto->getCantidad());
+                $em->persist($producto);
+                $em->flush();
+                $this->addFlash('success', "Producto movido correctamente.");
+                return $this->redirectToRoute('negocio_show', ['id' => $producto->getNegocio()->getId()]);
+            }
+        }
+        return $this->render(
+            'negocio/moverProd.html.twig',
+            [
+                'producto' => $producto,
+                'negocio' => $producto->getNegocio(),
+                'formMover' => $formMoverProd->createView(),
+                'categorias' => $categoriaRepository->findAll(),
+                'config' => $configuracionRepository->findOneById(1),
+            ]
+        );
+    }
+
 
     /**
      * @Route("/admin/negocio/{id}/delete", name="negocio_delete", methods={"DELETE"})
