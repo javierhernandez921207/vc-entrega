@@ -249,6 +249,8 @@ class NegocioController extends AbstractController
                 foreach ($formMoverProd->get('negocio')->getData()->getProductos() as $prod) {
                     if($prod->getNombre()== $producto->getNombre()){
                         $prod->setCantidad($prod->getCantidad()+$formMoverProd->get('cantidad_mover')->getData());
+                        $prod->setPrecio($producto->getPrecio());
+                        $prod->setCosto($producto->getCosto());
                         $prod->setCantidadCuadre($prod->getCantidad());
                         $em->persist($prod);
                         $existe = true;
