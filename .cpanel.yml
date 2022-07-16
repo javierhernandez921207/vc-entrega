@@ -1,0 +1,7 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/vcentreg/public_html/
+    - export DEPLOYPATH2=/home/vcentreg/
+    - /bin/rsync -av public_html $DEPLOYPATH
+    - /bin/rsync -av site_backend $DEPLOYPATH2
