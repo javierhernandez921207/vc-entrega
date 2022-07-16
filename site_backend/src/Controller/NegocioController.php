@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Controller;
-
+use App\Telegram;
 use App\Entity\Cuadre;
 use App\Entity\Log;
 use App\Entity\Negocio;
@@ -70,7 +70,7 @@ class NegocioController extends AbstractController
     /**
      * @Route ("/trab/negocio/{id}", name="negocio_show")
      */
-    public function show(CategoriaRepository $categoriaRepository, ImageOptimizer $imageOptimizer, NegocioRepository $negocioRepository, ConfiguracionRepository $configuracionRepository, Negocio $negocio, Request $request, PaginatorInterface $paginator)
+    public function show(UserRepository $userRepository,Telegram $telegram, CategoriaRepository $categoriaRepository, ImageOptimizer $imageOptimizer, NegocioRepository $negocioRepository, ConfiguracionRepository $configuracionRepository, Negocio $negocio, Request $request, PaginatorInterface $paginator)
     {
         if (!$this->getUser()->permisoNegocio($negocio) && $this->getUser()->getRolPadre() != "ROLE_ADMIN") {
             $this->addFlash('error', "No tiene permisos para entrar a ese negocio.");
@@ -120,9 +120,11 @@ class NegocioController extends AbstractController
                     $producto->setRegistro(new \DateTime('now'));
                     $producto->setNegocio($negocio);
                     $em->persist($producto);
-                    $log = new Log(new \DateTime('now'), 'PRODUCTO NEGOCIO', 'Add producto a negocio ' . $negocio->getNombre(), $this->getUser());
+                    $mensaje = "Producto registrado por ". $this->getUser() ." : " . $producto->getNombre() ." negocio: ".$producto->getNegocio(). " cantiadad: ". $producto->getCantidad();
+                    $log = new Log(new \DateTime('now'), 'PRODUCTO NEGOCIO', $mensaje, $this->getUser());                    
                     $em->persist($log);
                     $em->flush();
+                    $telegram->notifTelegramGrupo($userRepository->findAllAdmin(), $mensaje);  
                     $this->addFlash('success', 'Producto registado correctamente');
                 } catch (FileException $exception) {
                     $this->addFlash('error', $exception->getMessage());
@@ -228,7 +230,7 @@ class NegocioController extends AbstractController
     /**
      * @Route ("/trab/negocio/{id}/moverProducto/", name="moverProducto")
      */
-    public function moverProductoNegocio(ConfiguracionRepository $configuracionRepository, CategoriaRepository $categoriaRepository, Request $request, Producto $producto)
+    public function moverProductoNegocio(UserRepository $userRepository,Telegram $telegram, ConfiguracionRepository $configuracionRepository, CategoriaRepository $categoriaRepository, Request $request, Producto $producto)
     {
         $em = $this->getDoctrine()->getManager();
         $formMoverProd = $this->createForm(CantProdMoverType::class);        
@@ -239,7 +241,7 @@ class NegocioController extends AbstractController
                 $this->addFlash('error', "La cantidad a mover de " . $producto->getNombre() . " no puede ser mayor que " . $producto->getCantidad());
             } 
             elseif($formMoverProd->get('cantidad_mover')->getData()< 1) {
-                $this->addFlash('error', "La cantidad de " . $producto->getNombre() . " a mover debe ser mayor que 1.");
+                $this->addFlash('error', "La cantidad de " . $producto->getNombre() . " a mover debe ser mayor que 0.");
             }
             elseif($formMoverProd->get('negocio')->getData() == $producto->getNegocio() ){
                 $this->addFlash('error', "Elige otro negocio para mover este producto.");
@@ -256,6 +258,7 @@ class NegocioController extends AbstractController
                         $existe = true;
                     }
                 }
+                $neg = $producto->getNegocio();
                 if(!$existe){
                     $prod = new Producto();
                     $prod->setNombre($producto->getNombre());
@@ -272,12 +275,17 @@ class NegocioController extends AbstractController
                 }
                 $producto->setCantidad($producto->getCantidad()- $formMoverProd->get('cantidad_mover')->getData());
                 $producto->setCantidadCuadre($producto->getCantidad());
+                $log = new Log(new \DateTime('now'), 'PRODUCTO NEGOCIO', "Mover producto ".$producto->getNombre() ." origen: ".$neg." cantidad: ".$formMoverProd->get('cantidad_mover')->getData()." destino: " .$formMoverProd->get('negocio')->getData(), $this->getUser());
+                $em->persist($log);
                 $em->persist($producto);
                 $em->flush();
+                $mensaje = "Producto movido por ". $this->getUser() ." : " . $producto->getNombre() ." origen: ".$neg." cantidad: ".$formMoverProd->get('cantidad_mover')->getData()." destino: " .$formMoverProd->get('negocio')->getData();
+                $telegram->notifTelegramGrupo($userRepository->findAllAdmin(), $mensaje);        
                 $this->addFlash('success', "Producto movido correctamente.");
                 return $this->redirectToRoute('negocio_show', ['id' => $producto->getNegocio()->getId()]);
             }
         }
+                   
         return $this->render(
             'negocio/moverProd.html.twig',
             [

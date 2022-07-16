@@ -67,6 +67,21 @@ class ProductoRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return Producto[] Returns productos negocios 
+     */
+
+    public function findByNegocio($negocio)
+    {
+
+        return $this->createQueryBuilder('p')            
+            ->Where('p.negocio =:neg')
+            ->setParameter('neg', $negocio)
+            ->addOrderBy('p.cantidad', 'desc')            
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
      * @return Producto[]
      */
     public function findBySearchQuery(string $query): array

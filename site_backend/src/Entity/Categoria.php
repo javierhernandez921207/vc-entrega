@@ -118,4 +118,9 @@ class Categoria
         return true;
     }
 
+    public function __toString()
+    {
+        return $this->nombre;
+    }
+
 }

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Categoria;
+use App\Entity\Log;
 use App\Entity\Negocio;
 use App\Entity\Pedido;
 use App\Entity\Producto;
@@ -13,6 +14,8 @@ use App\ImageOptimizer;
 use App\Repository\CategoriaRepository;
 use App\Repository\ConfiguracionRepository;
 use App\Repository\ProductoRepository;
+use App\Repository\UserRepository;
+use App\Telegram;
 use Cassandra\Session;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -33,7 +36,7 @@ class ProductoController extends AbstractController
     /**
      * @Route("/admin/prod/new/{id}", name="producto_new", methods={"GET","POST"})
      */
-    public function new(CategoriaRepository $categoriaRepository, ConfiguracionRepository $configuracionRepository, ImageOptimizer $imageOptimizer, Request $request, Categoria $categoria): Response
+    public function new(UserRepository $userRepository, Telegram $telegram, CategoriaRepository $categoriaRepository, ConfiguracionRepository $configuracionRepository, ImageOptimizer $imageOptimizer, Request $request, Categoria $categoria): Response
     {
         $producto = new Producto();
         $form = $this->createForm(ProductoType::class, $producto);
@@ -58,6 +61,10 @@ class ProductoController extends AbstractController
                 $producto->setRegistro(new \DateTime('now'));
                 $producto->setCategoria($categoria);
                 $entityManager->persist($producto);
+                $mensaje = "Producto registrado por ". $this->getUser() ." : " . $producto->getNombre() ." categoria: ".$producto->getCategoria(). " cantiadad: ". $producto->getCantidad();
+                $log = new Log(new \DateTime('now'), 'PRODUCTO', $mensaje, $this->getUser());
+                $entityManager->persist($log);                
+                $telegram->notifTelegramGrupo($userRepository->findAllAdmin(), $mensaje);  
                 $entityManager->flush();
                 $this->addFlash('success', 'Producto registado correctamente');
             } catch (FileException $exception) {
@@ -91,7 +98,7 @@ class ProductoController extends AbstractController
     /**
      * @Route("/admin/prod/{id}/edit", name="producto_edit", methods={"GET","POST"})
      */
-    public function edit(Request $request, Producto $producto, ImageOptimizer $imageOptimizer, CategoriaRepository $categoriaRepository, ConfiguracionRepository $configuracionRepository): Response
+    public function edit(Telegram $telegram, UserRepository $userRepository, Request $request, Producto $producto, ImageOptimizer $imageOptimizer, CategoriaRepository $categoriaRepository, ConfiguracionRepository $configuracionRepository): Response
     {
         $form = $this->createForm(ProductoType::class, $producto);
         $form->handleRequest($request);
@@ -120,6 +127,10 @@ class ProductoController extends AbstractController
                 }
                 $producto->setRegistro(new \DateTime('now'));
                 $entityManager->persist($producto);
+                $mensaje = "Producto editado por ". $this->getUser() ." : " . $producto->getNombre() ." categoria: ".$producto->getCategoria();
+                $log = new Log(new \DateTime('now'), 'PRODUCTO', $mensaje, $this->getUser());
+                $entityManager->persist($log);                
+                $telegram->notifTelegramGrupo($userRepository->findAllAdmin(), $mensaje);  
                 $entityManager->flush();
                 $this->addFlash('success', 'Producto registado correctamente');
             } catch (FileException $exception) {
@@ -139,65 +150,79 @@ class ProductoController extends AbstractController
     }
 
     /**
-     * @Route("/admin/prod/{id}/edit_neg", name="producto_edit_neg", methods={"GET","POST"})
+     * @Route("/trab/prod/{id}/edit_neg", name="producto_edit_neg", methods={"GET","POST"})
      */
-    public function edit_neg(Request $request, Producto $producto, ImageOptimizer $imageOptimizer, CategoriaRepository $categoriaRepository, ConfiguracionRepository $configuracionRepository): Response
+    public function edit_neg(Request $request, Producto $producto, Telegram $telegram, UserRepository $userRepository, ImageOptimizer $imageOptimizer, CategoriaRepository $categoriaRepository, ConfiguracionRepository $configuracionRepository): Response
     {
-        $form = $this->createForm(ProductoType::class, $producto);
-        $form->handleRequest($request);
+        if (!$this->getUser()->permisoNegocio($producto->getNegocio()) && $this->getUser()->getRolPadre() != "ROLE_ADMIN") {
+            $this->addFlash('error', "No tiene permisos para entrar a ese negocio.");
+            return $this->redirectToRoute('negocio_index');
+        }
+        else{
+            $form = $this->createForm(ProductoType::class, $producto);
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            try {
-                $entityManager = $this->getDoctrine()->getManager();
-                if ($imgFile = $form->get('imagen')->getData()) {
-                    $fileName = $this->generateUniqueFileName() . '.' . $imgFile->guessExtension();
-                    $micarpeta = 'uploads/productos/neg_' . $producto->getNegocio()->getId();
-                    //Creo la carpeta de las img del departamento
-                    if (!file_exists($micarpeta)) {
-                        mkdir($micarpeta, 0777, true);
+            if ($form->isSubmitted() && $form->isValid()) {
+                try {
+                    $entityManager = $this->getDoctrine()->getManager();
+                    if ($imgFile = $form->get('imagen')->getData()) {
+                        $fileName = $this->generateUniqueFileName() . '.' . $imgFile->guessExtension();
+                        $micarpeta = 'uploads/productos/neg_' . $producto->getNegocio()->getId();
+                        //Creo la carpeta de las img del departamento
+                        if (!file_exists($micarpeta)) {
+                            mkdir($micarpeta, 0777, true);
+                        }
+                        $imgFile->move(
+                            $micarpeta,
+                            $fileName
+                        );
+                        $imageOptimizer->resize($micarpeta . '/' . $fileName);
+                        //Borro la imagen anterior.
+                        if ($producto->getImg()) {
+                            chdir($micarpeta);
+                            unlink($producto->getImg());
+                        }
+                        $producto->setImg($fileName);
                     }
-                    $imgFile->move(
-                        $micarpeta,
-                        $fileName
-                    );
-                    $imageOptimizer->resize($micarpeta . '/' . $fileName);
-                    //Borro la imagen anterior.
-                    if ($producto->getImg()) {
-                        chdir($micarpeta);
-                        unlink($producto->getImg());
-                    }
-                    $producto->setImg($fileName);
+                    $producto->setRegistro(new \DateTime('now'));
+                    $producto->setCantidadCuadre($producto->getCantidad());
+                    $entityManager->persist($producto);                    
+                    $mensaje = "Producto editado por ". $this->getUser() ." : " . $producto->getNombre() ." negocio: ".$producto->getNegocio();
+                    $log = new Log(new \DateTime('now'), 'PRODUCTO NEGOCIO', $mensaje, $this->getUser());
+                    $entityManager->persist($log);
+                    $entityManager->flush();                  
+                    $telegram->notifTelegramGrupo($userRepository->findAllAdmin(), $mensaje);  
+                    $this->addFlash('success', 'Producto registado correctamente');
+                } catch (FileException $exception) {
+                    $this->addFlash('error', $exception->getMessage());
                 }
-                $producto->setRegistro(new \DateTime('now'));
-                $producto->setCantidadCuadre($producto->getCantidad());
-                $entityManager->persist($producto);
-                $entityManager->flush();
-                $this->addFlash('success', 'Producto registado correctamente');
-            } catch (FileException $exception) {
-                $this->addFlash('error', $exception->getMessage());
+
+                $this->getDoctrine()->getManager()->flush();
+                return $this->redirectToRoute('negocio_show', ['id' => $producto->getNegocio()->getId()]);
             }
 
-            $this->getDoctrine()->getManager()->flush();
-            return $this->redirectToRoute('negocio_show', ['id' => $producto->getNegocio()->getId()]);
-        }
-
-        return $this->render('producto/edit_neg.html.twig', [
-            'producto' => $producto,
-            'form' => $form->createView(),
-            'categorias' => $categoriaRepository->findAll(),
-            'config' => $configuracionRepository->findOneById(1),
-        ]);
+            return $this->render('producto/edit_neg.html.twig', [
+                'producto' => $producto,
+                'form' => $form->createView(),
+                'categorias' => $categoriaRepository->findAll(),
+                'config' => $configuracionRepository->findOneById(1),
+            ]);
+        }        
     }
 
     /**
      * @Route("/admin/prod/{id}/delete", name="producto_delete", methods={"DELETE"})
      */
-    public function delete(Request $request, Producto $producto): Response
+    public function delete(Request $request, Producto $producto, Telegram $telegram, UserRepository $userRepository): Response
     {
         $idCat = $producto->getCategoria()->getId();
         if ($this->isCsrfTokenValid('delete' . $producto->getId(), $request->request->get('_token'))) {
+            $mensaje = "Producto eliminado por ". $this->getUser() ." : " . $producto->getNombre() ." categoria: ".$producto->getCategoria();
+            $telegram->notifTelegramGrupo($userRepository->findAllAdmin(), $mensaje);
             $this->addFlash('success', "Producto eliminado correctamente");
+            $log = new Log(new \DateTime('now'), 'PRODUCTO', $mensaje, $this->getUser());            
             $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($log);
             $entityManager->remove($producto);
             $entityManager->flush();
         }
@@ -206,14 +231,18 @@ class ProductoController extends AbstractController
     }
 
     /**
-     * @Route("/admin/prodneg/{id}/delete", name="producto_delete2", methods={"DELETE"})
+     * @Route("/trab/prodneg/{id}/delete", name="producto_delete2", methods={"DELETE"})
      */
-    public function delete2(Request $request, Producto $producto): Response
+    public function delete2(Request $request, Producto $producto, Telegram $telegram, UserRepository $userRepository): Response
     {
         $idNeg = $producto->getNegocio()->getId();
         if ($this->isCsrfTokenValid('delete' . $producto->getId(), $request->request->get('_token'))) {
+            $mensaje = "Producto eliminado por ". $this->getUser() ." : " . $producto->getNombre() ." negocio: ".$producto->getNegocio();
+            $telegram->notifTelegramGrupo($userRepository->findAllAdmin(), $mensaje);
+            $log = new Log(new \DateTime('now'), 'PRODUCTO', $mensaje, $this->getUser());            
             $this->addFlash('success', "Producto eliminado correctamente");
             $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($log);
             $entityManager->remove($producto);
             $entityManager->flush();
         }

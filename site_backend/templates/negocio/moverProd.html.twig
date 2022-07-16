@@ -29,7 +29,7 @@
 {% block tabla %}
     <hr> 
     <div>
-        {% if app.user.getRolPadre == "ROLE_ADMIN" %}
+        {% if app.user.getRolPadre == "ROLE_TRAB" or app.user.getRolPadre == "ROLE_ADMIN"%}
             <p>Datos del movimiento. </p>
             {{ form_start(formMover) }}
             {{ form_widget(formMover) }}
