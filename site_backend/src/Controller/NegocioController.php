@@ -317,7 +317,7 @@ class NegocioController extends AbstractController
     /**
      * @Route("/trab/negocio/{id}/cuadre", name="negocio_cuadre")
      */
-    public function cuadre(ConfiguracionRepository $configuracionRepository, CategoriaRepository $categoriaRepository, Request $request, Negocio $negocio): Response
+    public function cuadre(UserRepository $userRepository,Telegram $telegram,ConfiguracionRepository $configuracionRepository, CategoriaRepository $categoriaRepository, Request $request, Negocio $negocio): Response
     {        
         $em = $this->getDoctrine()->getManager();
         $cuadre = new Cuadre();
@@ -404,6 +404,8 @@ class NegocioController extends AbstractController
                 $templateProcessor->saveAs(utf8_decode($ruta));
 
                 $log = new Log(new \DateTime('now'), 'NEGOCIO', 'Creó cuadre negocio ' . $negocio->getNombre(), $this->getUser());
+                $mensaje = "Cuadre negocio ".$negocio->getNombre()." fecha: ". $cuadre->getFecha()->format("d/m/Y g:ia"). " saliente: ". $cuadre->getTrabajadorSaliente(). " entrante: ". $cuadre->getTrabajadorEntrante(). " total: $". $cuadre->getTotal(). " ganancia: $". $cuadre->getGanacia() . " caja: $". $cuadre->getFondo();
+                $telegram->notifTelegramGrupo($userRepository->findAllAdmin(), $mensaje);
                 $em->persist($log);
 
                 $em->flush();

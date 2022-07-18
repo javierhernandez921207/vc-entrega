@@ -49,26 +49,28 @@ class RegistrationController extends AbstractController
             $user->setSaldo(0);
             $user->setDeuda(0);
             $user->setEstado('activado');
+            $user->setIsVerified(true);
+
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
             $entityManager->flush();
 
             // generate a signed url and email it to the user
-            try {
-                $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
-                    (new TemplatedEmail())
-                        ->from(new Address('soporte@vc-entrega.com', 'Soporte VC Entrega'))
-                        ->to($user->getCorreo())
-                        ->subject('Activa tu cuenta VC entrega')
-                        ->htmlTemplate('user/registration/confirmation_email.html.twig')
-                );
-            } catch (\Exception $exception) {
-                $this->addFlash('error', $exception->getMessage());
-            }
+            //try {
+            //    $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
+            //        (new TemplatedEmail())
+            //            ->from(new Address('soporte@vc-entrega.com', 'Soporte VC Entrega'))
+            //            ->to($user->getCorreo())
+            //            ->subject('Activa tu cuenta VC entrega')
+            //           ->htmlTemplate('user/registration/confirmation_email.html.twig')
+            //    );
+            //} catch (\Exception $exception) {
+            //    $this->addFlash('error', $exception->getMessage());
+            //}
             // do anything else you need here, like send an email
-            // $this->addFlash('success', 'Cuenta creada correctamente, verifica tu correo para iniciar sesión.');
-            $request->getSession()->set('verificaemail', $user->getCorreo());
+            $this->addFlash('success', 'Cuenta creada correctamente');
+            //$request->getSession()->set('verificaemail', $user->getCorreo());
             return $this->redirectToRoute('app_login');
         }
         return $this->render('user/registration/register.html.twig', [

@@ -319,6 +319,30 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 .html(inputFile.files[0].name);
         });
     </script>
+    <script>           
+        $(document).ready(function() {
+    
+        $(document).on('click keyup','.mis-checkboxes',function() {
+        calcular();
+        });
+
+        });
+
+        function calcular() {
+            var tot = $('#total');
+            tot.val(0);
+            $('.mis-checkboxes').each(function() {
+                if($(this).hasClass('mis-checkboxes')) {
+                    tot.val(($(this).is(':checked') ? parseFloat($(this).attr('tu-attr-precio')) : 0) + parseFloat(tot.val()));  
+                }
+                else {
+                    tot.val(parseFloat(tot.val()) + (isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val())));
+                }
+            });
+            var totalParts = parseFloat(tot.val()).toFixed(2).split('.');
+            tot.val('$' + totalParts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '.' +  (totalParts.length > 1 ? totalParts[1] : '00'));  
+        }   
+    </script>
 {% endblock %}
 
 {% block graf_ganacia %}

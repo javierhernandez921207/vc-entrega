@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block titulo %} <h1 class="m-0 text-dark">Negocios</h1>{% endblock %}
+{% block titulo %} <h1 class="m-0 text-dark">Negocios</h1> {% endblock %}
 
 {% block menu_neg %} active {% endblock %}
 {% block menu_gest_neg %} active {% endblock %}
@@ -15,21 +15,28 @@
     {% if app.user.getRolPadre == "ROLE_ADMIN" %}
         <div class="col-md-12">
             <div class="row">
-                <div class="col-md-12" style="margin-bottom: 10px">
+                <div class="col-6" style="margin-bottom: 10px">
                     {{ include('negocio/_new_neg_form.html.twig') }}
+                </div>                
+            </div>
+            <div class="row">
+                <div class="col-12" style="margin-bottom: 10px">
+                    <input type="text" readonly class="form-control-plaintext"id="total" placeholder="0.00"/>      
                 </div>
             </div>
         </div>
+        
     {% endif %}
-
+    
     {% for negocio in negocios %}
         <div class="col-md-4 col-lg-3 col-xl-2">
-            <div class="card">
+            <div class="card">                
                 <div class="card-header">
                     <h5 class="m-0"><i class="fas fa-{{ negocio.icono }} nav-icon"></i> {{ negocio.nombre }}</h5>
                 </div>
                 <div class="card-body">
                     <h6>productos: {{ negocio.productos | length }}</h6>
+                    <h6><input type="checkbox" class="mis-checkboxes" tu-attr-precio="{{ negocio.getTotalInvertido }}"> total invertido: ${{ negocio.getTotalInvertido | number_format(2, '.', ',') }}</h6>
                     <h6>ultimo cuadre:
                         {% if negocio.cuadres | length > 0 %}
                             {% set l = negocio.cuadres | length %}
@@ -54,3 +61,6 @@
     {% endfor %}
 
 {% endblock contenido %}
+{% block invertido %}
+
+{% endblock %}
