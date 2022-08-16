@@ -371,8 +371,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         };
                     }
             });
-            
-            result.val('$' + tot);  
+            var totalParts = parseFloat(tot).toFixed(2).split('.');
+            result.val('$' + totalParts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '.' +  (totalParts.length > 1 ? totalParts[1] : '00'));  
         }        
     </script>
 {% endblock %}
