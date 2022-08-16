@@ -320,16 +320,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
         });
     </script>
     <script>           
-        $(document).ready(function() {
-    
-        $(document).on('click keyup','.mis-checkboxes',function() {
-        calcular();
+        $(document).ready(function() {    
+            $(document).on('click keyup','.mis-checkboxes',function() {
+                calcular();
+                let result = $('#total-adicional');
+                result.val('$'+ 0)
+            });
         });
 
-        });
-
+        let total = 0;
         function calcular() {
-            var tot = $('#total');
+            var tot = $('#total');         
             tot.val(0);
             $('.mis-checkboxes').each(function() {
                 if($(this).hasClass('mis-checkboxes')) {
@@ -339,9 +340,40 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     tot.val(parseFloat(tot.val()) + (isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val())));
                 }
             });
+            total = tot.val();
             var totalParts = parseFloat(tot.val()).toFixed(2).split('.');
             tot.val('$' + totalParts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '.' +  (totalParts.length > 1 ? totalParts[1] : '00'));  
-        }   
+        }
+
+                 
+
+        function calcular2() {
+            let adic = $('#adicional')      
+            let arr = total+' '+adic.val();
+            arr = arr.split(' ');
+            let result = $('#total-adicional');
+            let tot = 0;
+            let _num = 0;
+            let sig = '';
+            arr.forEach((e) => {
+                    if (tot==0) { 
+                        tot = Number(e);
+                    } else {
+                        if (e == '+' || e == '-' ) {
+                            sig = e;
+                        } else {
+                            _num = Number(e);
+                            if (sig=='+') {
+                                tot += _num
+                            } else if (sig=='-') {
+                                tot -= _num
+                            }
+                        };
+                    }
+            });
+            
+            result.val('$' + tot);  
+        }        
     </script>
 {% endblock %}
 

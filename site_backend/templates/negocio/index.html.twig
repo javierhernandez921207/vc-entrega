@@ -20,10 +20,22 @@
                 </div>                
             </div>
             <div class="row">
-                <div class="col-12" style="margin-bottom: 10px">
+                <div class="col-auto" style="margin-bottom: 10px">
+                    <label>Total marcado</label>
                     <input type="text" readonly class="form-control-plaintext"id="total" placeholder="0.00"/>      
                 </div>
-            </div>
+                 <div class="col-auto" style="margin-bottom: 10px">
+                    <label>Operaciones Adicionales</label>
+                    <input type="text" class="form-control" id="adicional" placeholder="+100-50+400"/>      
+                </div>
+                <div class="col-auto" style="margin-bottom: 10px">
+                    <button type="button" class="btn btn-primary" onclick="calcular2()">Caluclar</button>                          
+                </div>
+                <div class="col-auto" style="margin-bottom: 10px">
+                    <label>Total</label>
+                    <input type="text" readonly class="form-control-plaintext"id="total-adicional" placeholder="0.00"/>
+                </div>
+            </div>            
         </div>
         
     {% endif %}
