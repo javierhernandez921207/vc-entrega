@@ -24,13 +24,14 @@
                     <label>Total marcado</label>
                     <input type="text" readonly class="form-control-plaintext"id="total" placeholder="0.00"/>      
                 </div>
-                 <div class="col-auto" style="margin-bottom: 10px">
-                    <label>Operaciones Adicionales</label>
-                    <input type="text" class="form-control" id="adicional" placeholder="+ 100 - 50 + 400.25"/>      
-                </div>
                 <div class="col-auto" style="margin-bottom: 10px">
-                    <button type="button" class="btn btn-success" onclick="calcular2()">Calcular</button>                          
-                </div>
+                    {{ form_start(formcadena) }}
+                        {{ form_row(formcadena.cadena) }}                    
+                        <button class="btn btn-success">
+                            <i class="fa fa-save fa-lg mr-2"></i>
+                        </button>
+                    {{ form_end(formcadena) }}   
+                </div>                
                 <div class="col-auto" style="margin-bottom: 10px">
                     <label>Total</label>
                     <input type="text" readonly class="form-control-plaintext"id="total-adicional" placeholder="0.00"/>

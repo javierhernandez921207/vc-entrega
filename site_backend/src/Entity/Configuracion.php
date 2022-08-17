@@ -41,6 +41,11 @@ class Configuracion
      */
     private $cambiocup;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $cadena;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -102,6 +107,18 @@ class Configuracion
     public function setCambiocup(float $cambiocup): self
     {
         $this->cambiocup = $cambiocup;
+
+        return $this;
+    }
+
+    public function getCadena(): ?string
+    {
+        return $this->cadena;
+    }
+
+    public function setCadena(?string $cadena): self
+    {
+        $this->cadena = $cadena;
 
         return $this;
     }

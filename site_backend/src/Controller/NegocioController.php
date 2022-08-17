@@ -1,12 +1,15 @@
 <?php
 
 namespace App\Controller;
+
+use App\Entity\Configuracion;
 use App\Telegram;
 use App\Entity\Cuadre;
 use App\Entity\Log;
 use App\Entity\Negocio;
 use App\Entity\Producto;
 use App\Entity\User;
+use App\Form\CadenaAdicionalType;
 use App\Form\CantProdActualType;
 use App\Form\DineroCajaType;
 use App\Form\CantProdMoverType;
@@ -48,6 +51,17 @@ class NegocioController extends AbstractController
         $newNegocio = new Negocio();
         $em = $this->getDoctrine()->getManager();
         $form = $this->createForm(NegocioType::class, $newNegocio);
+        //OPCIONES GENERALES
+        $opciones = $this->getDoctrine()->getRepository(Configuracion::class)->findOneById(1);
+        $formOpciones = $this->createForm(CadenaAdicionalType::class, $opciones);
+        $formOpciones->handleRequest($request);
+
+        if ($formOpciones->isSubmitted() && $formOpciones->isValid()) {
+            $em->persist($opciones);
+            $em->flush();
+            $this->addFlash('success', "Operaciones Adicionales cambiadas correctamente.");
+            return $this->redirectToRoute('negocio_index');
+        }
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -62,6 +76,7 @@ class NegocioController extends AbstractController
             'controller_name' => 'NegocioController',
             'negocios' => $negocioRepository->findAll(),
             'formn' => $form->createView(),
+            'formcadena'=> $formOpciones->createView(),
             'categorias' => $categoriaRepository->findAll(),
             'config' => $configuracionRepository->findOneById(1),
         ]);

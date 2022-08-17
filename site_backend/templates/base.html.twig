@@ -323,8 +323,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         $(document).ready(function() {    
             $(document).on('click keyup','.mis-checkboxes',function() {
                 calcular();
-                let result = $('#total-adicional');
-                result.val('$'+ 0)
+                calcular2();                
             });
         });
 
@@ -348,7 +347,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                  
 
         function calcular2() {
-            let adic = $('#adicional')      
+            let adic = $('#cadena_adicional_cadena')      
             let arr = total+' '+adic.val();
             arr = arr.split(' ');
             let result = $('#total-adicional');
