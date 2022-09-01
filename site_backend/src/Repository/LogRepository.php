@@ -28,8 +28,7 @@ class LogRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('l')
             ->andWhere('l.usuario = :val')
             ->setParameter('val', $value)
-            ->orderBy('l.fecha', 'DESC')
-            ->setMaxResults(20)
+            ->orderBy('l.fecha', 'DESC')            
             ->getQuery()
             ->getResult();
     }

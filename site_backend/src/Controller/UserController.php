@@ -177,19 +177,19 @@ class UserController extends AbstractController
         }
 
         $logs = $this->getDoctrine()->getRepository(Log::class)->findByUsuario($user);
-        $pagination = $paginator->paginate($logs, $request->query->getInt('log', 1), 20, array('pageParameterName' => 'log'));
+        //$pagination = $paginator->paginate($logs, $request->query->getInt('log', 1), 5000, array('pageParameterName' => 'log'));
         $pedAll = $em->getRepository(Pedido::class)->findAllByCliente($user->getId());
-        $pagination2 = $paginator->paginate($pedAll, $request->query->getInt('pedidos', 1), 20, array('pageParameterName' => 'pedidos'));
+        //$pagination2 = $paginator->paginate($pedAll, $request->query->getInt('pedidos', 1), 5000, array('pageParameterName' => 'pedidos'));
         return $this->render('user/perfil.html.twig', [
             'usuario' => $user,
-            'logs' => $pagination,
+            'logs' => $logs,
             'formRol' => $formRol->createView(),
             'formRec' => $formRec->createView(),
             'formDatPer' => $formDatosPer->createView(),
             'formPagarDeuda' => $formPagarDeuda->createView(),
             'formResetPass' => $formReset->createView(),
             'categorias' => $categoriaRepository->findAll(),
-            'pedAll' => $pagination2,
+            'pedAll' => $pedAll,
             'config' => $configuracionRepository->findOneById(1),
         ]);
     }
