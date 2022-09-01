@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block titulo %}<h1 class="m-0 text-dark"> Entrada de producto - {{ producto.nombre }}</h1>{% endblock %}
+
+{% block menu_dep %} active {% endblock %}
+
+{% block camino %}
+    <li class="breadcrumb-item"><a href="{{ path('index') }}">inicio</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('negocio_index') }}">negocios</a></li>
+    <li class="breadcrumb-item"><a
+                href="{{ path('negocio_show',{'id': producto.negocio.id}) }}">{{ producto.negocio.nombre }}</a>
+    </li>
+    <li class="breadcrumb-item active">{{ producto.nombre }}</li>
+{% endblock %}
+{% block contenido %}
+    <div class="card card-solid col-12">
+        <div class="card-body">
+            <div class="row">                
+                <div class="col-auto">                
+                    {{ form_start(form) }}
+                    {{ form_row(form.entrada) }}
+                       
+                    <button style="margin-right: 3px" type="reset" class="btn btn-default">cancelar</button>
+                    <button class="btn btn-success"><i class="fa fa-save fa-lg mr-2"></i>{{ button_label|default('Guardar') }}</button>
+                    {{ form_end(form) }}                                       
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

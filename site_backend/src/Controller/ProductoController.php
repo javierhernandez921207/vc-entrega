@@ -9,6 +9,7 @@ use App\Entity\Pedido;
 use App\Entity\Producto;
 use App\Entity\User;
 use App\Form\CantProdType;
+use App\Form\EntradaProdType;
 use App\Form\ProductoType;
 use App\ImageOptimizer;
 use App\Repository\CategoriaRepository;
@@ -17,6 +18,7 @@ use App\Repository\ProductoRepository;
 use App\Repository\UserRepository;
 use App\Telegram;
 use Cassandra\Session;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -150,6 +152,45 @@ class ProductoController extends AbstractController
     }
 
     /**
+     * @Route("/admin/prod/{id}/entrada", name="producto_entrada", methods={"GET","POST"})
+     */
+    public function entrada(Telegram $telegram, UserRepository $userRepository, Request $request, Producto $producto, CategoriaRepository $categoriaRepository, ConfiguracionRepository $configuracionRepository): Response
+    {
+        $form = $this->createForm(EntradaProdType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            try {
+                if($form->get('entrada')->getData() < 0){
+                    new Exception("No se pudo completar la entrada.");
+                }
+                $cant_anterior = $producto->getCantidad();
+                $entityManager = $this->getDoctrine()->getManager();                
+                $producto->setCantidad($producto->getCantidad() + $form->get('entrada')->getData());
+                $entityManager->persist($producto);
+                $mensaje = "Entrada de producto por ". $this->getUser() ." : " . $producto->getNombre()." negocio: ". $producto->getNegocio() ." cantidad + entrada: ".$cant_anterior ." + ".$form->get('entrada')->getData();
+                $log = new Log(new \DateTime('now'), 'PRODUCTO', $mensaje, $this->getUser());
+                $entityManager->persist($log);                
+                $telegram->notifTelegramGrupo($userRepository->findAllAdmin(), $mensaje);  
+                $entityManager->flush();
+                $this->addFlash('success', 'Entrada de producto correctamente');
+            } catch (Exception $exception) {
+                $this->addFlash('error', $exception->getMessage());
+            }
+
+            $this->getDoctrine()->getManager()->flush();
+            return $this->redirectToRoute('negocio_show', ['id' => $producto->getNegocio()->getId()]);
+        }
+
+        return $this->render('producto/entrada.html.twig', [
+            'producto' => $producto,
+            'form' => $form->createView(),
+            'categorias' => $categoriaRepository->findAll(),
+            'config' => $configuracionRepository->findOneById(1),
+        ]);
+    }
+
+    /**
      * @Route("/trab/prod/{id}/edit_neg", name="producto_edit_neg", methods={"GET","POST"})
      */
     public function edit_neg(Request $request, Producto $producto, Telegram $telegram, UserRepository $userRepository, ImageOptimizer $imageOptimizer, CategoriaRepository $categoriaRepository, ConfiguracionRepository $configuracionRepository): Response
@@ -160,8 +201,10 @@ class ProductoController extends AbstractController
         }
         else{
             $form = $this->createForm(ProductoType::class, $producto);
-            $form->handleRequest($request);
-
+            $precio_c_antes = $producto->getCosto();
+            $precio_v_antes = $producto->getPrecio();
+            $cantidad_antes = $producto->getCantidad();
+            $form->handleRequest($request); 
             if ($form->isSubmitted() && $form->isValid()) {
                 try {
                     $entityManager = $this->getDoctrine()->getManager();
@@ -186,9 +229,18 @@ class ProductoController extends AbstractController
                     }
                     $producto->setRegistro(new \DateTime('now'));
                     $producto->setCantidadCuadre($producto->getCantidad());
-                    $entityManager->persist($producto);                    
-                    $mensaje = "Producto editado por ". $this->getUser() ." : " . $producto->getNombre() ." negocio: ".$producto->getNegocio();
+                                      
+                    $mensaje = "Producto editado por ". $this->getUser() ." : " 
+                    . $producto->getNombre()
+                    ." negocio: ".$producto->getNegocio() 
+                    ." ANTES: costo: ". $precio_c_antes
+                    ." venta: ". $precio_v_antes
+                    ." cantidad: ". $cantidad_antes
+                    ." DESPUES: costo: ".$producto->getCosto()
+                    ." venta: ".$producto->getPrecio()
+                    ." cantidad: ".$producto->getCantidad();
                     $log = new Log(new \DateTime('now'), 'PRODUCTO NEGOCIO', $mensaje, $this->getUser());
+                    $entityManager->persist($producto);  
                     $entityManager->persist($log);
                     $entityManager->flush();                  
                     $telegram->notifTelegramGrupo($userRepository->findAllAdmin(), $mensaje);  

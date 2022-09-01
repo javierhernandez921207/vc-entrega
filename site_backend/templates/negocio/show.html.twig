@@ -93,22 +93,29 @@
                                         <span style="font-size: medium;" class="badge badge-danger">Agotado</span>
                                     {% endif %}
                                 </td>
-                                {% if app.user.getRolPadre == "ROLE_TRAB" or app.user.getRolPadre == "ROLE_ADMIN"%}
-                                    <td>
+                                <td>
+                                    {% if app.user.getRolPadre == "ROLE_ADMIN"%}
+                                   
                                         <div class="btn-group btn-group-sm">
                                             <a href="{{ path('producto_edit_neg',{'id':producto.id}) }}"
                                                class="btn btn-outline-warning"><i class="fas fa-edit"></i></a>
-                                        </div>
-                                        {% if producto.cantidad>0 %}
+                                        </div>                                                                               
+                                    
+                                    {% endif %}
+                                    {% if app.user.getRolPadre == "ROLE_TRAB" or app.user.getRolPadre == "ROLE_ADMIN"%}
+                                        {% if producto.cantidad>0 %}                                        
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="{{ path('moverProducto',{'id':producto.id}) }}"
+                                                    class="btn btn-warning"><i class="fas fa-dolly"></i></a>
+                                                </div>
+                                        {% endif %}                                    
                                             <div class="btn-group btn-group-sm">
-                                                <a href="{{ path('moverProducto',{'id':producto.id}) }}"
-                                                class="btn btn-warning"><i class="fas fa-dolly"></i></a>
-                                            </div> 
-                                        {% endif %}
-                                    </td>
-                                {% endif %}
+                                                <a href="{{ path('producto_entrada',{'id':producto.id}) }}"
+                                                        class="btn btn-success"><i class="fas fa-arrow-right-to-bracket"></i></a>
+                                            </div>                                    
+                                    {% endif %}
+                                </td>                                
                             </tr>
-
                         {% else %}
                             <tr>
                                 <td colspan="4">No existen productos registrados en este negocio.</td>

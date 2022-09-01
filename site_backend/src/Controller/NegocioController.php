@@ -13,6 +13,7 @@ use App\Form\CadenaAdicionalType;
 use App\Form\CantProdActualType;
 use App\Form\DineroCajaType;
 use App\Form\CantProdMoverType;
+use App\Form\EntradaProdType;
 use App\Form\NegocioType;
 use App\Form\ProductoType;
 use App\ImageOptimizer;
@@ -65,6 +66,7 @@ class NegocioController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $newNegocio->addTrabajadore($this->getUser());
             $em->persist($newNegocio);
             $log = new Log(new \DateTime('now'), 'CREAR NEGOCIO', 'Creó negocio ' . $newNegocio->getNombre(), $this->getUser());
             $em->persist($log);
@@ -264,10 +266,18 @@ class NegocioController extends AbstractController
             else{
                 $existe = false;
                 foreach ($formMoverProd->get('negocio')->getData()->getProductos() as $prod) {
-                    if($prod->getNombre()== $producto->getNombre()){
+                    if($prod->getNombre() == $producto->getNombre()){
+                        if($prod->getPrecio() != $producto->getPrecio()){
+                            $this->addFlash('error', "Los precios de los productos son diferentes.");
+                            return $this->redirectToRoute('negocio_show', ['id' => $producto->getNegocio()->getId()]);
+                        }
+                        if($prod->getCosto() != $producto->getCosto()){
+                            $this->addFlash('error', "Los costos de los productos son diferentes.");
+                            return $this->redirectToRoute('negocio_show', ['id' => $producto->getNegocio()->getId()]);
+                        }
                         $prod->setCantidad($prod->getCantidad()+$formMoverProd->get('cantidad_mover')->getData());
-                        $prod->setPrecio($producto->getPrecio());
-                        $prod->setCosto($producto->getCosto());
+                        //$prod->setPrecio($producto->getPrecio());
+                        //$prod->setCosto($producto->getCosto());
                         $prod->setCantidadCuadre($prod->getCantidad());
                         $em->persist($prod);
                         $existe = true;

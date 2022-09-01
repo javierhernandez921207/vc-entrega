@@ -42,36 +42,39 @@
     {% endif %}
     
     {% for negocio in negocios %}
-        <div class="col-md-4 col-lg-3 col-xl-2">
-            <div class="card">                
-                <div class="card-header">
-                    <h5 class="m-0"><i class="fas fa-{{ negocio.icono }} nav-icon"></i> {{ negocio.nombre }}</h5>
-                </div>
-                <div class="card-body">
-                    <h6>productos: {{ negocio.productos | length }}</h6>
-                    <h6><input type="checkbox" class="mis-checkboxes" tu-attr-precio="{{ negocio.getTotalInvertido }}"> total invertido: ${{ negocio.getTotalInvertido | number_format(2, '.', ',') }}</h6>
-                    <h6>ultimo cuadre:
+        {% if app.user in negocio.trabajadores %}
+            <div class="col-md-4 col-lg-3 col-xl-2">
+                <div class="card">                
+                    <div class="card-header">
+                        <h5 class="m-0"><i class="fas fa-{{ negocio.icono }} nav-icon"></i> {{ negocio.nombre }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>productos: {{ negocio.productos | length }}</h6>
+                        <h6><input type="checkbox" class="mis-checkboxes" tu-attr-precio="{{ negocio.getTotalInvertido }}"> total invertido: ${{ negocio.getTotalInvertido | number_format(2, '.', ',') }}</h6>
+                        <h6>ultimo cuadre:
+                            {% if negocio.cuadres | length > 0 %}
+                                {% set l = negocio.cuadres | length %}
+                                {{ negocio.cuadres[l - 1].fecha |  date("d/m/Y g:ia") }}
+                            {% else %}
+                                no se han realizado.
+                            {% endif %}
+                        </h6>
                         {% if negocio.cuadres | length > 0 %}
                             {% set l = negocio.cuadres | length %}
-                            {{ negocio.cuadres[l - 1].fecha |  date("d/m/Y g:ia") }}
-                        {% else %}
-                            no se han realizado.
+                            <h6> Salió: {{ negocio.cuadres[l - 1].getTrabajadorSaliente }} </h6>
+                            <h6> Entra: {{ negocio.cuadres[l - 1].getTrabajadorEntrante }} </h6>
                         {% endif %}
-                    </h6>
-                    {% if negocio.cuadres | length > 0 %}
-                        {% set l = negocio.cuadres | length %}
-                        <h6> Salió: {{ negocio.cuadres[l - 1].getTrabajadorSaliente }} </h6>
-                        <h6> Entra: {{ negocio.cuadres[l - 1].getTrabajadorEntrante }} </h6>
-                    {% endif %}
-                    <a href="{{ path('negocio_show',{'id':negocio.id}) }}"
-                       class="btn btn-info btn-lg btn-flat" style="width: 100%;">
-                        <i class="fas fa-dollar-sign fa-lg mr-2"></i>
-                        ver
-                    </a>
+                        <a href="{{ path('negocio_show',{'id':negocio.id}) }}"
+                        class="btn btn-info btn-lg btn-flat" style="width: 100%;">
+                            <i class="fas fa-dollar-sign fa-lg mr-2"></i>
+                            ver
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
     {% endfor %}
+    
 
 {% endblock contenido %}
 {% block invertido %}
