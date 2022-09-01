@@ -167,6 +167,7 @@ class ProductoController extends AbstractController
                 $cant_anterior = $producto->getCantidad();
                 $entityManager = $this->getDoctrine()->getManager();                
                 $producto->setCantidad($producto->getCantidad() + $form->get('entrada')->getData());
+                $producto->setCantidadCuadre($producto->getCantidad());
                 $entityManager->persist($producto);
                 $mensaje = "Entrada de producto por ". $this->getUser() ." : " . $producto->getNombre()." negocio: ". $producto->getNegocio() ." cantidad + entrada: ".$cant_anterior ." + ".$form->get('entrada')->getData();
                 $log = new Log(new \DateTime('now'), 'PRODUCTO', $mensaje, $this->getUser());
