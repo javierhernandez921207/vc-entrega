@@ -152,7 +152,7 @@ class ProductoController extends AbstractController
     }
 
     /**
-     * @Route("/admin/prod/{id}/entrada", name="producto_entrada", methods={"GET","POST"})
+     * @Route("/trab/prod/{id}/entrada", name="producto_entrada", methods={"GET","POST"})
      */
     public function entrada(Telegram $telegram, UserRepository $userRepository, Request $request, Producto $producto, CategoriaRepository $categoriaRepository, ConfiguracionRepository $configuracionRepository): Response
     {
