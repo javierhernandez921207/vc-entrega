@@ -42,7 +42,7 @@
     {% endif %}
     
     {% for negocio in negocios %}
-        {% if app.user in negocio.trabajadores %}
+        {% if app.user in negocio.trabajadores or app.user.getRolPadre == "ROLE_ADMIN" %}
             <div class="col-md-4 col-lg-3 col-xl-2">
                 <div class="card">                
                     <div class="card-header">
