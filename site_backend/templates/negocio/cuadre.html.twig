@@ -39,14 +39,26 @@
                         </button>
                         {{ form_end(formCaja) }}
                     </div>
-                    <div class="col-md-2" style="display: flex;"></div>
-                    <div class="col-md-2">
-                        <span><h4>Caja Actual: </h4></span>
-                        <span class="badge badge-warning">
-                        <h1 style="font-size: 2.5rem;">${{ totalRecaudado }}</h1>
-                        </span>
-                    </div>
-                    <div class="col-md-2" style="display: flex;"></div>
+                    <div class="col-md-6">
+                        <div>
+                            <span><h4>Caja Actual: </h4></span>
+                            <span class="badge badge-warning">
+                            <h1 style="font-size: 2.5rem;">${{ totalRecaudado |number_format(2, '.', ',')}}</h1>
+                            </span>
+                        </div>
+                        <div>
+                            <span><h4>Invertido: </h4></span>
+                            <span class="badge badge-info">
+                            <h1 style="font-size: 2.5rem;">${{ totalIvertido |number_format(2, '.', ',')}}</h1>
+                            </span>
+                        </div>
+                        <div>
+                            <span><h4>Ganacia: </h4></span>
+                            <span class="badge badge-success">
+                            <h1 style="font-size: 2.5rem;">${{ totalGanancia |number_format(2, '.', ',')}}</h1>
+                            </span>
+                        </div>
+                    </div> 
                 </div>
             </div>
         </div>

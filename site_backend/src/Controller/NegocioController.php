@@ -141,7 +141,7 @@ class NegocioController extends AbstractController
                     $log = new Log(new \DateTime('now'), 'PRODUCTO NEGOCIO', $mensaje, $this->getUser());                    
                     $em->persist($log);
                     $em->flush();
-                    $telegram->notifTelegramGrupo($userRepository->findAllAdmin(), $mensaje);  
+                    $telegram->notifTelegramGrupo($userRepository->findAllTrab(), $mensaje);
                     $this->addFlash('success', 'Producto registado correctamente');
                 } catch (FileException $exception) {
                     $this->addFlash('error', $exception->getMessage());
@@ -305,7 +305,7 @@ class NegocioController extends AbstractController
                 $em->persist($producto);
                 $em->flush();
                 $mensaje = "Producto movido por ". $this->getUser() ." : " . $producto->getNombre() ." origen: ".$neg." cantidad: ".$formMoverProd->get('cantidad_mover')->getData()." destino: " .$formMoverProd->get('negocio')->getData();
-                $telegram->notifTelegramGrupo($userRepository->findAllAdmin(), $mensaje);        
+                $telegram->notifTelegramGrupo($userRepository->findAllTrab(), $mensaje);        
                 $this->addFlash('success', "Producto movido correctamente.");
                 return $this->redirectToRoute('negocio_show', ['id' => $producto->getNegocio()->getId()]);
             }
@@ -369,13 +369,15 @@ class NegocioController extends AbstractController
         $form->handleRequest($request);
         $totalRecaudado = 0;
         $totalGanancia = 0;
+        $totalInvertido = 0;
+
 
         foreach ($negocio->getProductos() as $producto) {
            
                 $vendidos = $producto->getCantidad() - $producto->getCantidadCuadre();
                 $totalRecaudado += $vendidos * $producto->getPrecio();
                 $totalGanancia += ($producto->getPrecio() - $producto->getCosto()) * $vendidos;
-            
+                $totalInvertido += $producto->getCosto() * $vendidos;            
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -430,7 +432,7 @@ class NegocioController extends AbstractController
 
                 $log = new Log(new \DateTime('now'), 'NEGOCIO', 'Creó cuadre negocio ' . $negocio->getNombre(), $this->getUser());
                 $mensaje = "Cuadre negocio ".$negocio->getNombre()." fecha: ". $cuadre->getFecha()->format("d/m/Y g:ia"). " saliente: ". $cuadre->getTrabajadorSaliente(). " entrante: ". $cuadre->getTrabajadorEntrante(). " total: $". $cuadre->getTotal(). " ganancia: $". $cuadre->getGanacia() . " caja: $". $cuadre->getFondo();
-                $telegram->notifTelegramGrupo($userRepository->findAllAdmin(), $mensaje);
+                $telegram->notifTelegramGrupo($userRepository->findAllTrab(), $mensaje);
                 $em->persist($log);
 
                 $em->flush();
@@ -440,6 +442,8 @@ class NegocioController extends AbstractController
         }        
         return $this->render('negocio/cuadre.html.twig', [
                 'totalRecaudado' => $totalRecaudado,
+                'totalIvertido' => $totalInvertido,
+                'totalGanancia' => $totalGanancia,
                 'negocio' => $negocio,
                 'formCaja' => $form->createView(),
                 'categorias' => $categoriaRepository->findAll(),

@@ -66,7 +66,7 @@ class ProductoController extends AbstractController
                 $mensaje = "Producto registrado por ". $this->getUser() ." : " . $producto->getNombre() ." categoria: ".$producto->getCategoria(). " cantiadad: ". $producto->getCantidad();
                 $log = new Log(new \DateTime('now'), 'PRODUCTO', $mensaje, $this->getUser());
                 $entityManager->persist($log);                
-                $telegram->notifTelegramGrupo($userRepository->findAllAdmin(), $mensaje);  
+                $telegram->notifTelegramGrupo($userRepository->findAllTrab(), $mensaje);  
                 $entityManager->flush();
                 $this->addFlash('success', 'Producto registado correctamente');
             } catch (FileException $exception) {
@@ -132,7 +132,7 @@ class ProductoController extends AbstractController
                 $mensaje = "Producto editado por ". $this->getUser() ." : " . $producto->getNombre() ." categoria: ".$producto->getCategoria();
                 $log = new Log(new \DateTime('now'), 'PRODUCTO', $mensaje, $this->getUser());
                 $entityManager->persist($log);                
-                $telegram->notifTelegramGrupo($userRepository->findAllAdmin(), $mensaje);  
+                $telegram->notifTelegramGrupo($userRepository->findAllTrab(), $mensaje);  
                 $entityManager->flush();
                 $this->addFlash('success', 'Producto registado correctamente');
             } catch (FileException $exception) {
@@ -172,7 +172,7 @@ class ProductoController extends AbstractController
                 $mensaje = "Entrada de producto por ". $this->getUser() ." : " . $producto->getNombre()." negocio: ". $producto->getNegocio() ." cantidad + entrada: ".$cant_anterior ." + ".$form->get('entrada')->getData();
                 $log = new Log(new \DateTime('now'), 'PRODUCTO', $mensaje, $this->getUser());
                 $entityManager->persist($log);                
-                $telegram->notifTelegramGrupo($userRepository->findAllAdmin(), $mensaje);  
+                $telegram->notifTelegramGrupo($userRepository->findAllTrab(), $mensaje);  
                 $entityManager->flush();
                 $this->addFlash('success', 'Entrada de producto correctamente');
             } catch (Exception $exception) {
@@ -244,7 +244,7 @@ class ProductoController extends AbstractController
                     $entityManager->persist($producto);  
                     $entityManager->persist($log);
                     $entityManager->flush();                  
-                    $telegram->notifTelegramGrupo($userRepository->findAllAdmin(), $mensaje);  
+                    $telegram->notifTelegramGrupo($userRepository->findAllTrab(), $mensaje);  
                     $this->addFlash('success', 'Producto registado correctamente');
                 } catch (FileException $exception) {
                     $this->addFlash('error', $exception->getMessage());
@@ -271,7 +271,7 @@ class ProductoController extends AbstractController
         $idCat = $producto->getCategoria()->getId();
         if ($this->isCsrfTokenValid('delete' . $producto->getId(), $request->request->get('_token'))) {
             $mensaje = "Producto eliminado por ". $this->getUser() ." : " . $producto->getNombre() ." categoria: ".$producto->getCategoria();
-            $telegram->notifTelegramGrupo($userRepository->findAllAdmin(), $mensaje);
+            $telegram->notifTelegramGrupo($userRepository->findAllTrab(), $mensaje);
             $this->addFlash('success', "Producto eliminado correctamente");
             $log = new Log(new \DateTime('now'), 'PRODUCTO', $mensaje, $this->getUser());            
             $entityManager = $this->getDoctrine()->getManager();
@@ -291,7 +291,7 @@ class ProductoController extends AbstractController
         $idNeg = $producto->getNegocio()->getId();
         if ($this->isCsrfTokenValid('delete' . $producto->getId(), $request->request->get('_token'))) {
             $mensaje = "Producto eliminado por ". $this->getUser() ." : " . $producto->getNombre() ." negocio: ".$producto->getNegocio();
-            $telegram->notifTelegramGrupo($userRepository->findAllAdmin(), $mensaje);
+            $telegram->notifTelegramGrupo($userRepository->findAllTrab(), $mensaje);
             $log = new Log(new \DateTime('now'), 'PRODUCTO', $mensaje, $this->getUser());            
             $this->addFlash('success', "Producto eliminado correctamente");
             $entityManager = $this->getDoctrine()->getManager();

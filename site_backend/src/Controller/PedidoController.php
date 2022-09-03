@@ -439,7 +439,7 @@ class PedidoController extends AbstractController
             $mensaje = "Hola " . $pedido->getCliente()->getNombre() . " tu pedido id:" . $pedido->getId() . " ha sido pagado en paypal.";
             $telegram->notifTelegramUsuario($pedido->getCliente(), $mensaje);
         }
-        $this->notifTelegramGrupo($userRepository->findAllTrab(), "Hay un nuevo pedido por el valor de: " . $pedido->getTotal() . ' a pagar: ' . $pedido->getMetpago());
+        $telegram->notifTelegramGrupo($userRepository->findAllTrab(), "Hay un nuevo pedido por el valor de: " . $pedido->getTotal() . ' a pagar: ' . $pedido->getMetpago());
         return $this->redirectToRoute('pedido_list');
     }
 
