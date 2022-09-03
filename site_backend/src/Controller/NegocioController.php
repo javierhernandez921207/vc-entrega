@@ -34,6 +34,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use \Doctrine\ORM\EntityRepository;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 date_default_timezone_set("America/Havana");
 /**
@@ -364,6 +365,13 @@ class NegocioController extends AbstractController
                         ->where('n.id = :neg')
                         ->setParameter('neg', $negocio);
                 },])
+            ->add('nota', TextareaType::class,
+                    ['label' => "Nota",
+                        'attr' => [
+                            'cols' => 80,
+                            'rows' => 8,
+                            'placeholder' => 'Nota del cuadre'
+                        ]])
             ->getForm();
 
         $form->handleRequest($request);
@@ -405,6 +413,7 @@ class NegocioController extends AbstractController
                 $templateProcessor->setValue('total', htmlspecialchars($cuadre->getTotal()));
                 $templateProcessor->setValue('ganancia', htmlspecialchars($cuadre->getGanacia()));
                 $templateProcessor->setValue('caja', htmlspecialchars($cuadre->getFondo()));
+                $templateProcessor->setValue('nota', htmlspecialchars($cuadre->getNota()));
 
                 for ($i = 0; $i < count($negocio->getProductos()); $i++) {
                     $templateProcessor->setValue('producto#' . ($i + 1), htmlspecialchars($negocio->getProductos()[$i]->getNombre()));

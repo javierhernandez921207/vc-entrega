@@ -54,6 +54,11 @@ class Cuadre
      */
     private $fondo;
 
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $nota;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -139,6 +144,18 @@ class Cuadre
     public function setFondo(float $fondo): self
     {
         $this->fondo = $fondo;
+
+        return $this;
+    }
+
+    public function getNota(): ?string
+    {
+        return $this->nota;
+    }
+
+    public function setNota(?string $nota): self
+    {
+        $this->nota = $nota;
 
         return $this;
     }

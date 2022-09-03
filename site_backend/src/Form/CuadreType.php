@@ -12,6 +12,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -29,7 +30,14 @@ class CuadreType extends AbstractType
             ])
             ->add('trabajador_entrante', EntityType::class, [
                 'class' => User::class
-            ]);
+            ])
+            ->add('nota', TextareaType::class,
+            ['label' => "Nota",
+                'attr' => [
+                    'cols' => 80,
+                    'rows' => 8,
+                    'placeholder' => 'Nota del cuadre'
+                ]]);
 
     }
 
