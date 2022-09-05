@@ -399,6 +399,7 @@ class NegocioController extends AbstractController
                 $cuadre->setTotal($totalRecaudado);
                 $cuadre->setGanacia($totalGanancia);
                 $cuadre->setNegocio($negocio);
+                $cuadre->setNota($form->get('nota')->getData());
                 $em->persist($cuadre);
                 $em->flush();
 
