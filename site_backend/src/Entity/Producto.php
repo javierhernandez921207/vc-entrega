@@ -33,7 +33,7 @@ class Producto
     private $descr;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="float")
      */
     private $cantidad;
 
@@ -74,7 +74,7 @@ class Producto
     private $negocio;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="float", nullable=true)
      */
     private $cantidad_cuadre;
 
@@ -119,12 +119,12 @@ class Producto
         return $this;
     }
 
-    public function getCantidad(): ?int
+    public function getCantidad(): ?float
     {
         return $this->cantidad;
     }
 
-    public function setCantidad(int $cantidad): self
+    public function setCantidad(float $cantidad): self
     {
         $this->cantidad = $cantidad;
 
@@ -206,12 +206,12 @@ class Producto
         return $this;
     }
 
-    public function getCantidadCuadre(): ?int
+    public function getCantidadCuadre(): ?float
     {
         return $this->cantidad_cuadre;
     }
 
-    public function setCantidadCuadre(?int $cantidad_cuadre): self
+    public function setCantidadCuadre(?float $cantidad_cuadre): self
     {
         $this->cantidad_cuadre = $cantidad_cuadre;
 

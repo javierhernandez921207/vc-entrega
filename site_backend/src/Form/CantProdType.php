@@ -15,7 +15,7 @@ class CantProdType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('cantidad', \Symfony\Component\Form\Extension\Core\Type\IntegerType::class,
+            ->add('cantidad', \Symfony\Component\Form\Extension\Core\Type\NumberType::class,
                 ['label' => 'Cantidad', 'attr' => ['placeholder' => 'Unidades a llevar de este producto.', 'default' => 1]]);
     }
 

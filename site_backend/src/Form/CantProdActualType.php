@@ -12,7 +12,7 @@ class CantProdActualType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('cantidad_cuadre', \Symfony\Component\Form\Extension\Core\Type\IntegerType::class,
+            ->add('cantidad_cuadre', \Symfony\Component\Form\Extension\Core\Type\NumberType::class,
                 ['label' => ' ', 'attr' => ['placeholder' => 'Unidades en el cuadre']])
             ->add('submit', SubmitType::class, [
                 'label' => 'Guardar']);

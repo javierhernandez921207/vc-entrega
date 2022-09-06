@@ -9,6 +9,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -31,7 +32,7 @@ class ProductoType extends AbstractType
                         'rows' => 8,
                         'placeholder' => 'Descripción del producto'
                     ]])
-            ->add('cantidad', IntegerType::class, ['attr' => ['placeholder' => 'Unidades físicas en el almacén.']])
+            ->add('cantidad', NumberType::class, ['attr' => ['placeholder' => 'Unidades físicas en el almacén.']])
             ->add('cantMin', IntegerType::class, ['label' => "Cantidad mínima", 'attr' => ['required' => false, 'placeholder' => 'Unidades físicas necesarias en el almacén.']])
             ->add('imagen', FileType::class, [
                 'label' => 'Imagen del producto',

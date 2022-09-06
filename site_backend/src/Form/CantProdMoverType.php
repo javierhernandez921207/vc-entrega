@@ -17,7 +17,7 @@ class CantProdMoverType extends AbstractType
             ->add('negocio', EntityType::class, [
                 'class' => Negocio::class
             ])
-            ->add('cantidad_mover', \Symfony\Component\Form\Extension\Core\Type\IntegerType::class,
+            ->add('cantidad_mover', \Symfony\Component\Form\Extension\Core\Type\NumberType::class,
                 ['label' => 'Unidades a mover', 'attr' => ['placeholder' => 'Unidades a mover']])
             ->add('submit', SubmitType::class, [
                 'label' => 'Guardar']);
