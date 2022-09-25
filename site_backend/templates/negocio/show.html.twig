@@ -164,7 +164,7 @@
                             <div class="info-box">
                                 <span class="info-box-icon bg-gradient-maroon elevation-1"><i class="fas fa-coins"></i></span>
                                 <div class="info-box-content">
-                                    <span class="info-box-text">Ganacia esperada {{ negocio.nombre }}</span>
+                                    <span class="info-box-text">Ganancia esperada {{ negocio.nombre }}</span>
                                     <span class="info-box-number"> ${{ negocio.getTotalGanacia | number_format(2, '.', ',') }}
                                 </span>
                                 </div>
@@ -215,26 +215,35 @@
                             <th>Saliente</th>
                             <th>Entrante</th>
                             <th>Total</th>
-                            <th>Ganacia</th>
+                            <th>Ganancia</th>
+                            <th>Ganancia Real</th>
                             <th>Caja</th>
                             <th>Documento</th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for cuadre in cuadres %}
-                            <tr>
+                            <tr data-toggle="collapse" href="#{{ cuadre.id }}">
                                 <td>{{ cuadre.id }}</td>
                                 <td>{{ cuadre.fecha | date("d/m/Y g:ia") }}</td>
                                 <td>{{ cuadre.getTrabajadorSaliente }}</td>
                                 <td>{{ cuadre.getTrabajadorEntrante }}</td>
                                 <td>{{ cuadre.total }}</td>
                                 <td>{{ cuadre.ganacia }}</td>
+                                <td>{{ cuadre.getGananciaReal }}</td>
                                 <td>{{ cuadre.fondo }}</td>
                                 <td>
                                     <a href="{{ asset("cuadres") }}/{{ negocio.id }}/cuadre_{{ cuadre.id }}.docx"
                                        class="btn btn-info">
                                         <i class="fas fa-file-word"></i>
                                     </a>
+                                </td>                               
+                            </tr>
+                            <tr class="collapse" id="{{ cuadre.id }}">
+                                <td colspan="9">                                    
+                                    <div class="card card-body">
+                                        {{cuadre.nota}}
+                                    </div>                                   
                                 </td>
                             </tr>
                         {% else %}

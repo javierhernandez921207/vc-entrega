@@ -25,6 +25,10 @@ class CuadreType extends AbstractType
                 'label' => "Cantidad a dejar en caja",
                 'currency' => 'USD',    // default value is 'EUR'
             ])
+            ->add('ganacia_real', MoneyType::class, [
+                'label' => "Ganancia Real",
+                'currency' => 'USD',    // default value is 'EUR'
+            ])
             ->add('trabajador_saliente', EntityType::class, [
                 'class' => User::class
             ])

@@ -59,6 +59,11 @@ class Cuadre
      */
     private $nota;
 
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $ganancia_real;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -156,6 +161,18 @@ class Cuadre
     public function setNota(?string $nota): self
     {
         $this->nota = $nota;
+
+        return $this;
+    }
+
+    public function getGananciaReal(): ?float
+    {
+        return $this->ganancia_real;
+    }
+
+    public function setGananciaReal(float $ganancia_real): self
+    {
+        $this->ganancia_real = $ganancia_real;
 
         return $this;
     }

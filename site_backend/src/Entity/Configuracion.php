@@ -46,6 +46,11 @@ class Configuracion
      */
     private $cadena;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $cadenaUSD;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -119,6 +124,18 @@ class Configuracion
     public function setCadena(?string $cadena): self
     {
         $this->cadena = $cadena;
+
+        return $this;
+    }
+
+    public function getCadenaUSD(): ?string
+    {
+        return $this->cadenaUSD;
+    }
+
+    public function setCadenaUSD(?string $cadenaUSD): self
+    {
+        $this->cadenaUSD = $cadenaUSD;
 
         return $this;
     }

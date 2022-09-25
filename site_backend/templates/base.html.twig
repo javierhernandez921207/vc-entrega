@@ -323,7 +323,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
         $(document).ready(function() {    
             $(document).on('click keyup','.mis-checkboxes',function() {
                 calcular();
-                calcular2();                
+                let adic = $('#cadena_adicional_cadena');
+                let adicUSD = $('#cadena_adicional_cadenaUSD');
+                let result = $('#total-adicional'); 
+                let resultUSD = $('#total-adicional-usd'); 
+                calcular2(adic, result);                
+                calcular2(adicUSD, resultUSD);                
             });
         });
 
@@ -346,11 +351,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                  
 
-        function calcular2() {
-            let adic = $('#cadena_adicional_cadena')      
+        function calcular2(adic, result) { 
             let arr = total+' '+adic.val();
-            arr = arr.split(' ');
-            let result = $('#total-adicional');
+            arr = arr.split(' ');            
             let tot = 0;
             let _num = 0;
             let sig = '';
@@ -358,14 +361,19 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     if (tot==0) { 
                         tot = Number(e);
                     } else {
-                        if (e == '+' || e == '-' ) {
+                        if (e == '+' || e == '-' || e == '*' || e == '/') {
                             sig = e;
                         } else {
                             _num = Number(e);
                             if (sig=='+') {
-                                tot += _num
+                                tot += _num;
                             } else if (sig=='-') {
-                                tot -= _num
+                                tot -= _num;
+                            }
+                            if (sig=='*') {
+                                tot *= _num;                          
+                            } else if (sig=='/') {
+                                tot /= _num;
                             }
                         };
                     }

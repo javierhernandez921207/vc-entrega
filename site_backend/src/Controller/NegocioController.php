@@ -349,6 +349,7 @@ class NegocioController extends AbstractController
         $cuadre = new Cuadre();
         $form = $this->createFormBuilder()
             ->add('fondo', MoneyType::class, ['label' => "cantidad a dejar en caja", 'currency' => 'USD'])
+            ->add('ganancia_real', MoneyType::class, ['label' => "ganancia real", 'currency' => 'USD'])
             ->add('trabajador_entrante', EntityType::class, [
                 'class' => User::class,
                 'query_builder' => function (UserRepository $er) use ($negocio) {
@@ -398,6 +399,7 @@ class NegocioController extends AbstractController
                 $cuadre->setFecha(new \DateTime('now'));
                 $cuadre->setTotal($totalRecaudado);
                 $cuadre->setGanacia($totalGanancia);
+                $cuadre->setGananciaReal($form->get('ganancia_real')->getData());
                 $cuadre->setNegocio($negocio);
                 $cuadre->setNota($form->get('nota')->getData());
                 $em->persist($cuadre);
@@ -413,6 +415,7 @@ class NegocioController extends AbstractController
                 $templateProcessor->setValue('trabajadore', htmlspecialchars($cuadre->getTrabajadorEntrante()));
                 $templateProcessor->setValue('total', htmlspecialchars($cuadre->getTotal()));
                 $templateProcessor->setValue('ganancia', htmlspecialchars($cuadre->getGanacia()));
+                $templateProcessor->setValue('gananciareal', htmlspecialchars($cuadre->getGananciaReal()));
                 $templateProcessor->setValue('caja', htmlspecialchars($cuadre->getFondo()));
                 $templateProcessor->setValue('nota', htmlspecialchars($cuadre->getNota()));
 

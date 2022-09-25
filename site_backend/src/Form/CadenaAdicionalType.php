@@ -13,7 +13,11 @@ class CadenaAdicionalType extends AbstractType
     {
         $builder            
             ->add('cadena', null, [
-                'label' => 'Operaciones Adicionales',
+                'label' => 'Operaciones Adicionales CUP',
+                'attr' => ['placeholder' => '+ 100 - 200 + 400.25']
+            ])
+            ->add('cadenaUSD', null, [
+                'label' => 'Operaciones Adicionales USD',
                 'attr' => ['placeholder' => '+ 100 - 200 + 400.25']
             ])
         ;

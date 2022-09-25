@@ -27,15 +27,22 @@
                 <div class="col-auto" style="margin-bottom: 10px">
                     {{ form_start(formcadena) }}
                         {{ form_row(formcadena.cadena) }}                    
+                        {{ form_row(formcadena.cadenaUSD) }}                    
                         <button class="btn btn-success">
                             <i class="fa fa-save fa-lg mr-2"></i>
                         </button>
                     {{ form_end(formcadena) }}   
-                </div>                
-                <div class="col-auto" style="margin-bottom: 10px">
-                    <label>Total</label>
-                    <input type="text" readonly class="form-control-plaintext"id="total-adicional" placeholder="0.00"/>
-                </div>
+                </div> 
+                <div class="col-auto"style="margin-bottom: 10px">
+                    <div class="form-group" >
+                        <label>Total</label>
+                        <input type="text" readonly class="form-control-plaintext"id="total-adicional" placeholder="0.00"/>
+                    </div>
+                    <div class="form-group" >
+                        <label>Total USD</label>
+                        <input type="text" readonly class="form-control-plaintext"id="total-adicional-usd" placeholder="0.00"/>
+                    </div>                
+                </div>               
             </div>            
         </div>
         
