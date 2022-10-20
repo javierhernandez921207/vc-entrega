@@ -267,18 +267,14 @@ class NegocioController extends AbstractController
             else{
                 $existe = false;
                 foreach ($formMoverProd->get('negocio')->getData()->getProductos() as $prod) {
-                    if($prod->getNombre() == $producto->getNombre()){
-                        if($prod->getPrecio() != $producto->getPrecio()){
-                            $this->addFlash('error', "Los precios de los productos son diferentes.");
-                            return $this->redirectToRoute('negocio_show', ['id' => $producto->getNegocio()->getId()]);
-                        }
+                    if($prod->getNombre() == $producto->getNombre()){                       
                         if($prod->getCosto() != $producto->getCosto()){
-                            $this->addFlash('error', "Los costos de los productos son diferentes.");
-                            return $this->redirectToRoute('negocio_show', ['id' => $producto->getNegocio()->getId()]);
+                            //Media de los costos
+                            $cantTotal = $prod->getCantidad() + $formMoverProd->get('cantidad_mover')->getData();
+                            $media = (($prod->getCosto() * $prod->getCantidad()) + ($producto->getCosto() * $formMoverProd->get('cantidad_mover')->getData())) / $cantTotal;
+                            $prod->setCosto($media);
                         }
-                        $prod->setCantidad($prod->getCantidad()+$formMoverProd->get('cantidad_mover')->getData());
-                        //$prod->setPrecio($producto->getPrecio());
-                        //$prod->setCosto($producto->getCosto());
+                        $prod->setCantidad($prod->getCantidad()+$formMoverProd->get('cantidad_mover')->getData());                        
                         $prod->setCantidadCuadre($prod->getCantidad());
                         $em->persist($prod);
                         $existe = true;

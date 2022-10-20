@@ -74,8 +74,8 @@
                                     <img src="{{ asset("uploads/productos/neg_") }}{{ negocio.id }}/{{ producto.getImg }}"
                                          class="product-image" alt="" style="width: 64px;"><br>
                                     {{ producto.getnombre }}</td>
-                                <td>{{ producto.getPrecio }}</td>
-                                <td>{{ producto.costo }}</td>
+                                <td>{{ producto.getPrecio |number_format(2, '.', ',')}}</td>
+                                <td>{{ producto.costo |number_format(2, '.', ',')}}</td>
                                 <td>{% if producto.cantidad>0 %}
                                         {{ producto.getCantidad }}
                                     {% else %}
