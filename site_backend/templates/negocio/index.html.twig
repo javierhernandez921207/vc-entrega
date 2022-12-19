@@ -58,6 +58,13 @@
                     <div class="card-body">
                         <h6>productos: {{ negocio.productos | length }}</h6>
                         <h6><input type="checkbox" class="mis-checkboxes" tu-attr-precio="{{ negocio.getTotalInvertido }}"> total invertido: ${{ negocio.getTotalInvertido | number_format(2, '.', ',') }}</h6>
+                        {% if negocio.getResultInversionCadena == "Error en cadena." %}
+                            <span style="font-size: medium;" class="badge badge-danger">{{negocio.getResultInversionCadena }}</span>
+                        {% elseif negocio.getResultInversionCadena | number_format(2, '.', ',') >= 0 %}
+                            <span style="font-size: medium;" class="badge badge-success">{{negocio.getResultInversionCadena | number_format(2, '.', ',')}}</span>
+                        {% else %}
+                            <span style="font-size: medium;" class="badge badge-danger">{{negocio.getResultInversionCadena | number_format(2, '.', ',')}}</span>
+                        {% endif %}
                         <h6>ultimo cuadre:
                             {% if negocio.cuadres | length > 0 %}
                                 {% set l = negocio.cuadres | length %}

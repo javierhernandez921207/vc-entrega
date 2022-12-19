@@ -99,8 +99,8 @@ class NegocioController extends AbstractController
             $form->handleRequest($request);
             $prod = $em->getRepository(Producto::class)->findByNegocio($negocio);
             $cuadre = $em->getRepository(Cuadre::class)->findByNegocioFecha($negocio);
-            $pagProd = $paginator->paginate($prod, $request->query->getInt('productos', 1), 50, array('pageParameterName' => 'productos'));
-            $pagCuadre = $paginator->paginate($cuadre, $request->query->getInt('cuadres', 1), 30, array('pageParameterName' => 'cuadres'));
+            $pagProd = $paginator->paginate($prod, $request->query->getInt('productos', 1), 5000, array('pageParameterName' => 'productos'));
+            $pagCuadre = $paginator->paginate($cuadre, $request->query->getInt('cuadres', 1), 5000, array('pageParameterName' => 'cuadres'));
 
             if ($form->isSubmitted() && $form->isValid()) {
                 $em->persist($negocio);

@@ -39,7 +39,8 @@ class NegocioType extends AbstractType
                     'Tv' => 'tv'
 
                 ],
-            ]);
+            ])
+            ->add('cadena');
     }
 
     public function configureOptions(OptionsResolver $resolver)

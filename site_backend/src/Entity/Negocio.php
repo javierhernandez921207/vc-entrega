@@ -43,6 +43,11 @@ class Negocio
      */
     private $trabajadores;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $cadena;
+
     public function __construct()
     {
         $this->productos = new ArrayCollection();
@@ -190,6 +195,47 @@ class Negocio
     public function __toString()
     {
         return $this->nombre;
+    }
+
+    public function getCadena(): ?string
+    {
+        return $this->cadena;
+    }
+
+    public function setCadena(?string $cadena): self
+    {
+        $this->cadena = $cadena;
+
+        return $this;
+    }
+
+    public function getResultInversionCadena(): ?string
+    {
+        $elementos = explode(" ",$this->cadena);
+        $total = $this->getTotalInvertido();
+        $sig = "";
+        foreach($elementos as $e)
+        {
+            if ($e == '+' || $e == '-' || $e == '*' || $e == '/') {
+                $sig = $e;
+            }
+            else{
+                if($sig == "" || !is_numeric($e)){
+                    $total = "Error en cadena.";
+                    break;
+                }
+                if ($sig == '+') {
+                    $total += $e;
+                } else if ($sig == '-') {
+                    $total -= $e;
+                }else if ($sig == '*') {
+                    $total *= $e;
+                } else if ($sig == '/') {
+                    $total /= $e;
+                }
+            }
+        }
+        return $total;
     }
 
 }

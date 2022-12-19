@@ -162,6 +162,16 @@
                         </div>
                         <div class="col-12">
                             <div class="info-box">
+                                <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-calculator"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Inversión (Cadena) </span>
+                                    <span class="info-box-number"> ${{ negocio.getResultInversionCadena | number_format(2, '.', ',') }}
+                                </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="info-box">
                                 <span class="info-box-icon bg-gradient-maroon elevation-1"><i class="fas fa-coins"></i></span>
                                 <div class="info-box-content">
                                     <span class="info-box-text">Ganancia esperada {{ negocio.nombre }}</span>

@@ -161,9 +161,17 @@ class ProductoController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                if($form->get('entrada')->getData() < 0){
+                $costro_entrada = $form->get('costo')->getData();
+                $cantidad_entrada = $form->get('entrada')->getData();
+                if($cantidad_entrada < 0 || $costro_entrada < 0){
                     new Exception("No se pudo completar la entrada.");
                 }
+                if($producto->getCosto() != $costro_entrada){
+                    //Media de los costos
+                    $cantTotal = $producto->getCantidad() + $cantidad_entrada;
+                    $media = (($producto->getCosto() * $producto->getCantidad()) + ($costro_entrada * $cantidad_entrada)) / $cantTotal;
+                    $producto->setCosto($media);
+                }  
                 $cant_anterior = $producto->getCantidad();
                 $entityManager = $this->getDoctrine()->getManager();                
                 $producto->setCantidad($producto->getCantidad() + $form->get('entrada')->getData());
