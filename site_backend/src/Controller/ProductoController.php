@@ -176,18 +176,7 @@ class ProductoController extends AbstractController
                 $entityManager = $this->getDoctrine()->getManager();                
                 $producto->setCantidad($producto->getCantidad() + $form->get('entrada')->getData());
                 $producto->setCantidadCuadre($producto->getCantidad());
-                $entityManager->persist($producto);
-                $cadena = $producto->getNegocio()->getCadena();
-                $elementos = explode(" ",$cadena);
-                $entityManager = $this->getDoctrine()->getManager();                 
-                if(is_array($elementos) && is_numeric($elementos[1]))
-                {                    
-                    $elementos[1] =  $elementos[1] + ($costro_entrada * $cantidad_entrada);
-                    $cadena = implode(" ", $elementos);
-                    $negocio = $producto->getNegocio();
-                    $negocio->setCadena($cadena);
-                    $entityManager->persist($negocio);
-                }
+                $entityManager->persist($producto);                
                 $mensaje = "Entrada de producto por ". $this->getUser() ." : " . $producto->getNombre()." negocio: ". $producto->getNegocio() ." cantidad + entrada: ".$cant_anterior ." + ".$form->get('entrada')->getData();
                 $log = new Log(new \DateTime('now'), 'PRODUCTO', $mensaje, $this->getUser());
                 $entityManager->persist($log);                

@@ -137,20 +137,7 @@ class NegocioController extends AbstractController
                     $producto->setCantidadCuadre($producto->getCantidad());
                     $producto->setRegistro(new \DateTime('now'));
                     $producto->setNegocio($negocio);
-                    $em->persist($producto);
-                    $cadena = $producto->getNegocio()->getCadena();
-                    $elementos = explode(" ",$cadena);
-                    $entityManager = $this->getDoctrine()->getManager(); 
-                    var_dump("h");
-                    if(is_array($elementos) && is_numeric($elementos[1]))
-                    {
-                        var_dump("holaa");
-                        $elementos[1] =  $elementos[1] + ($producto->getCosto() * $producto->getCantidad());
-                        $cadena = implode(" ", $elementos);
-                        $negocio = $producto->getNegocio();
-                        $negocio->setCadena($cadena);
-                        $entityManager->persist($negocio);
-                    }
+                    $em->persist($producto);                                                   
                     $mensaje = "Producto registrado por ". $this->getUser() ." : " . $producto->getNombre() ." negocio: ".$producto->getNegocio(). " cantiadad: ". $producto->getCantidad();
                     $log = new Log(new \DateTime('now'), 'PRODUCTO NEGOCIO', $mensaje, $this->getUser());                    
                     $em->persist($log);
