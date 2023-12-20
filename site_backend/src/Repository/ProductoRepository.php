@@ -61,7 +61,7 @@ class ProductoRepository extends ServiceEntityRepository
             ->andWhere('p.categoria !=:cat ')
             ->setParameter('cat', 'null')
             ->addOrderBy('p.registro', 'desc')
-            ->setMaxResults(20)
+            ->setMaxResults(200)
             ->getQuery()
             ->getResult();
     }

@@ -22,7 +22,7 @@ class AlmacenController extends AbstractController
     {
         $em = $this->getDoctrine()->getManager();
         $ultProductos = $em->getRepository(Producto::class)->findUltimosProd();
-        $pagUltProd = $paginator->paginate($ultProductos, $request->query->getInt('page', 1), 20);
+        $pagUltProd = $paginator->paginate($ultProductos, $request->query->getInt('page', 1), 200);
 
 
         return $this->render('almacen/index.html.twig', [

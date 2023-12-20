@@ -31,3 +31,7 @@ a {
     height: calc(100% - 4rem);
     overflow-y: auto;
 }
+.card-header-product{
+    max-height: 4rem;
+    min-height: 4rem;
+}

@@ -36,7 +36,6 @@ class Categoria
      *      orphanRemoval=true,
      *      cascade={"persist"}
      * )
-     * @ORM\OrderBy()
      */
     private $productos;
 
