@@ -196,10 +196,10 @@ class Pedido
 
     /**
      * @param Producto $p
-     * @param int $cant
+     * @param float $cant
      * @throws Exception
      */
-    public function addProductoPedido(Producto $p, int $cant): void
+    public function addProductoPedido(Producto $p, float $cant): void
     {
 
         if ($cant > $p->getCantidad())

@@ -64,7 +64,7 @@
                             <div class="mt-4">
                                 <input type="number" required class="form-control mb-2" id="formcantprod"
                                        placeholder="cantidad">
-                                <button onclick="addcarrito({{ producto.id }}, parseInt(document.getElementById('formcantprod').value) )"
+                                <button onclick="addcarrito({{ producto.id }}, document.getElementById('formcantprod').value)"
                                         class="btn btn-success btn-lg btn-flat">
                                     <i class="fas fa-cart-plus fa-lg mr-2"></i> Adicionar
                                 </button>

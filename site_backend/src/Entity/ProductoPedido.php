@@ -22,7 +22,7 @@ class ProductoPedido
     private $id_producto;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="float")
      */
     private $cantidad;
 
@@ -85,12 +85,12 @@ class ProductoPedido
         return $this;
     }
 
-    public function getCantidad(): ?int
+    public function getCantidad(): ?float
     {
         return $this->cantidad;
     }
 
-    public function setCantidad(int $cantidad): self
+    public function setCantidad(float $cantidad): self
     {
         $this->cantidad = $cantidad;
 

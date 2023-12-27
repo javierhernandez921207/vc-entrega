@@ -218,7 +218,7 @@ class Producto
         return $this;
     }
 
-    public function descontar(int $cantidad): void
+    public function descontar(float $cantidad): void
     {
         if ($cantidad > $this->cantidad)
             throw new Exception('Producto ' . $this->nombre . ' agotado.');
