@@ -57,8 +57,8 @@
                     <thead>
                     <tr>
                         <th>Nombre</th>
-                        <th>Precio</th>
                         <th>Costo</th>
+                        <th>Precio</th>
                         <th>Unidades</th>
                         <th>Unidades para cuadrar</th>
                         {% if app.user.getRolPadre == "ROLE_TRAB" or app.user.getRolPadre == "ROLE_ADMIN" %}
@@ -74,8 +74,8 @@
                                     <img src="{{ asset("uploads/productos/neg_") }}{{ negocio.id }}/{{ producto.getImg }}"
                                          class="product-image" alt="" style="width: 64px;"><br>
                                     {{ producto.getnombre }}</td>
-                                <td>{{ producto.getPrecio |number_format(2, '.', ',')}}</td>
-                                <td>{{ producto.costo |number_format(2, '.', ',')}}</td>
+                                <td>${{ producto.costo |number_format(2, '.', ',')}}</td>
+                                <td>${{ producto.getPrecio |number_format(2, '.', ',')}}</td>
                                 <td>{% if producto.cantidad>0 %}
                                         {{ producto.getCantidad }}
                                     {% else %}
