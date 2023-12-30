@@ -33,8 +33,8 @@
             <img src="{{ asset("uploads/productos/neg_") }}{{ negocio.id }}/{{ producto.getImg }}"
                  class="product-image" alt="" style="width: 64px;"><br>
             {{ producto.getnombre }}</td>
-        <td>{{ producto.getPrecio }}</td>
         <td>{{ producto.costo }}</td>
+        <td>{{ producto.getPrecio }}</td>
         <td>{{ producto.getCantidad }}</td>
         <td>
             {{ form_start(formCuadre) }}

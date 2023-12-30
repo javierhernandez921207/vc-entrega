@@ -114,7 +114,7 @@
 										{{ producto.getnombre }}</td>
 									<td>${{ producto.costo |number_format(2, '.', ',')}}</td>
 									<td>${{ producto.getPrecio |number_format(2, '.', ',')}}</td>
-									<td>{{ producto.getCantidad - producto.getCantidadCuadre }}</td>
+									<td>{{ (producto.getCantidad - producto.getCantidadCuadre) | number_format(2, '.', ',')}}</td>
 									<td>${{ ((producto.getCantidad - producto.getCantidadCuadre) * producto.costo) | number_format(2, '.', ',')}}</td>
 									<td>${{ ((producto.getCantidad - producto.getCantidadCuadre) * producto.precio) | number_format(2, '.', ',')}}</td>
 								</tr>
