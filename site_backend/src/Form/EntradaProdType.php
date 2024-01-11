@@ -14,7 +14,7 @@ class EntradaProdType extends AbstractType
         $builder
             ->add(
                 'entrada',
-                \Symfony\Component\Form\Extension\Core\Type\IntegerType::class,
+                \Symfony\Component\Form\Extension\Core\Type\NumberType::class,
                 ['label' => 'Unidades', 'attr' => ['placeholder' => 'Unidades a dar entrada']]
             )
             ->add('costo', MoneyType::class, [
